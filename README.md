@@ -1,7 +1,7 @@
 RestAgent is an HTTP client library for PHP. Project's primary goals are: 
 
 * Elegant and intuitive API. 
-* Minimizing boilerplate, so making HTTP requests from PHP becomes enjoyable.
+* Minimize boilerplate to make working with HTTP from PHP enjoyable.
 * Providing rich set of functionality for RESTful interactions. 
 
 RestAgent's API is inspired by the simplicity of the API in [https://github.com/visionmedia/superagent](SuperAgent) library for Node.js by TJ Holowaychuk.
