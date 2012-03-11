@@ -60,6 +60,19 @@ class HttpMethodsTest extends TestCase {
 
   }
 
+  public function test_full_url_get() {
+
+    $req = new \restagent\Request;
+
+    $resp = $req->set('Content-Type', 'text/plain')
+      ->add("q", "restagent")
+      ->get("http://www.bing.com/search");
+
+    $this->assertEquals("http://www.bing.com/search?q=restagent", $resp['meta']['url']);
+    $this->assertEquals(200, $resp['meta']['http_code']);
+
+  }
+
   /**
    * @TODO: implement firing exception if Content-Type is set during POST request and implement
    *       a test that verifies the firing of such exception
