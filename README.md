@@ -27,16 +27,29 @@ Assemble and send an HTTP POST:
 
     $response = $request
                     ->set("X-API-Key", "aabbccdd")
-                    ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+                    ->add(array("firstName" => "Irakli", "lastName" => "Nadareishvili"))
                     ->add("hobby", "programming")
                     ->set(array("User-Agent" => "RestAgent/1.0 php/libcurl", "foo" => "bar"))
                     ->post("http://example.com/user");
+
+Using custom HTTP method and setting a custom timeout:
+
+    $response = $request
+                    ->add(array("firstName" => "Irakli", "lastName" => "Nadareishvili"))
+                    ->set("X-API-Key", "aabbccdd")
+                    ->set(array("User-Agent" => "CERN-LineMode/2.15 libwww/2.17b3"))
+                    ->method("PATCH")
+                    ->timeout(500)
+                    ->send("/user/1");
+
 
 Where:
 
 * set() sets an HTTP header
 * add() sets a variable (query parameter in case of HTTP GET, or data variable in case of POST or PUT).
 * methods like get() and post() issue corresponding HTTP request.
+* method() sets a custom HTTP method to be used in conjuction with send() method.
+* timeout overrides the default timeout to a specified number of milliseconds.
 
 You can see in the example above that both add(), as well as set() methods take either an array or a single name/value
 pair as an argument. Why? Because it is convenient.

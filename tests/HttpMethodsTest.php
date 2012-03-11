@@ -185,7 +185,9 @@ class HttpMethodsTest extends TestCase {
       ->add("hobby", "programming")
       ->set("X-API-Key", "aabbccdd")
       ->set(array("foo" => "bar", "User-Agent" => "CERN-LineMode/2.15 libwww/2.17b3"))
-      ->send("/somepath", "PATCH");
+      ->method("PATCH")
+      ->timeout(1500)
+      ->send("/somepath");
 
     $response = array();
     eval('$response = ' . $http_response['data'] . ";");
@@ -212,6 +214,17 @@ class HttpMethodsTest extends TestCase {
 
     $this->assertEquals("CERN-LineMode/2.15 libwww/2.17b3", $response['server']['HTTP_USER_AGENT'],
       "Test2 (custom headers, passed as array) of set() functioning properly for HTTP PATCH");
+
+    try {
+      $this->request->set('Content-Type', 'application/json') // This is invalid
+        ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+        ->send("/somepath");
+    } catch (RestAgentException $ex) {
+      return;
+    }
+
+    $this->fail('You should not be able to call send() without sending method with method() first.');
+
 
   }
 

@@ -13,13 +13,17 @@ namespace restagent;
  */
 class Request {
 
+  const DEFAULT_TIMEOUT = 2000;
+
   /**
    * HTTP Timeout in Milliseconds
    */
-  private $timeout =  2000;
+  private $timeout = self::DEFAULT_TIMEOUT;
+
   private $base_url;
   private $data = array();
   private $headers = array();
+  private $method = '';
   private $curl;
 
   /**
@@ -42,12 +46,36 @@ class Request {
   /**
    * Class destructor cleans up any resources
    */
-  function __destruct() {
+  public function __destruct() {
     curl_close($this->curl);
   }
 
   /**
+   * Set HTTP method to use with send()
+   *
+   * @param $method
+   * @return Request
+   */
+  public function method($method) {
+    $this->method = strtoupper($method);
+    return $this;
+  }
+
+  /**
+   * Set timeout in milliseconds.
+   *
+   * @param $ms
+   */
+  public function timeout($ms) {
+    $this->timeout = $ms;
+    return $this;
+  }
+
+  /**
    * HTTP HEAD
+   *
+   * @TODO: http head is odd enough that for now it is not using http_request method and duplicates some code.
+   *        We may need to revisit that decision, later.
    *
    * @return
    *     Raw HTTP Headers of the response.
@@ -55,7 +83,7 @@ class Request {
    * @see: http://www.php.net/manual/en/context.params.php
    *
    */
-  function head($uri) {
+  public function head($uri) {
     curl_setopt($this->curl, CURLOPT_HEADER, 1);
 
     $full_url = $this->get_full_url($uri);
@@ -79,9 +107,11 @@ class Request {
 
     $response = curl_exec($this->curl);
 
-    //reset $this->data and $this->headers to allow clean re-use of the request object
+    //reset defaults to allow clean re-use of the request object
     $this->data = array();
     $this->headers = array();
+    $this->method = '';
+    $this->timeout = self::DEFAULT_TIMEOUT;
 
     // Restore default values
     curl_setopt($this->curl, CURLOPT_NOBODY, false);
@@ -94,9 +124,10 @@ class Request {
       $headers = $this->_http_parse_headers($response);
     }
 
-    return array('code' => curl_getinfo($this->curl, CURLINFO_HTTP_CODE),
-                 'meta' => curl_getinfo($this->curl),
-                 'data' => $headers);
+    return array(
+      'code' => curl_getinfo($this->curl, CURLINFO_HTTP_CODE),
+      'meta' => curl_getinfo($this->curl),
+      'data' => $headers);
   }
 
   /**
@@ -166,9 +197,12 @@ class Request {
    * @param $uri
    * @param $method
    */
-  function send($uri, $method) {
-    $method = strtoupper($method);
-    return $this->http_request($method, $uri, $this->data);
+  function send($uri) {
+    if (empty($this->method)) {
+      throw new RestAgentException("You need to set a method, before calling send()");
+    }
+    $this->method = strtoupper($this->method);
+    return $this->http_request($this->method, $uri, $this->data);
   }
 
   /**
@@ -203,9 +237,11 @@ class Request {
 
     $response = curl_exec($this->curl);
 
-    //reset $this->data and $this->headers to allow clean re-use of the request object
+    //reset defaults to allow clean re-use of the request object
     $this->data = array();
     $this->headers = array();
+    $this->method = '';
+    $this->timeout = self::DEFAULT_TIMEOUT;
 
     //$this->check_status($response, $full_url);
 
