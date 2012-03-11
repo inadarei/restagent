@@ -20,7 +20,7 @@ Issue a simple HTTP GET:
 Assemble and send an HTTP POST:
 
     $request = new \restagent\Request;
-    $response = $request->set('Accept', 'application/json')
+    $response = $request->set('Content-Type', 'application/json')
                         ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
                         ->add("hobby", "programming")
                         ->set("X-API-Key", "aabbccdd")

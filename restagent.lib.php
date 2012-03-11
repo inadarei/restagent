@@ -8,49 +8,37 @@ namespace restagent;
  * For full disclosure this is a shameless rip-off from: https://github.com/inadarei/settee/blob/master/src/classes/ZaphpaRestClient.class.php
  * That is: if you can call "stealing" from one's self "shameless" :)
  *
+ * @TODO support proxying using: CURLOPT_HTTPPROXYTUNNEL
+ *
  */
 class Request {
 
   /**
    * HTTP Timeout in Milliseconds
    */
-  const HTTP_TIMEOUT = 2000;
-
+  private $timeout =  2000;
   private $base_url;
+  private $data = array();
+  private $headers = array();
   private $curl;
 
-  private static $curl_workers = array();
-
   /**
-   * Singleton factory method
+   * Public constructor
+   *
+   * @param null $base_url
    */
-  static function get_instance($base_url) {
+  public function __construct($base_url = '') {
+    $this->base_url = (!empty($base_url)) ? rtrim($base_url, "/") : '';
 
-    if (empty(self::$curl_workers[$base_url])) {
-      self::$curl_workers[$base_url] = new RestAgent($base_url);
-    }
+    $this->curl = curl_init();
+    curl_setopt($this->curl, CURLOPT_USERAGENT, "RestAgent/1.0");
+    curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($this->curl, CURLOPT_HEADER, 0);
+    curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, 1);
+    curl_setopt($this->curl, CURLOPT_TIMEOUT_MS, $this->timeout);
+    curl_setopt($this->curl, CURLOPT_FORBID_REUSE, false); // Connection-pool for CURL
 
-    return self::$curl_workers[$base_url];
   }
-
-  /**
-   * Class constructor
-   */
-  private function __construct($base_url) {
-    $this->base_url = $base_url;
-
-    $curl = curl_init();
-    curl_setopt($curl, CURLOPT_USERAGENT, "RestAgent/1.0");
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($curl, CURLOPT_HEADER, 0);
-    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
-    curl_setopt($curl, CURLOPT_TIMEOUT_MS, self::HTTP_TIMEOUT);
-    curl_setopt($curl, CURLOPT_FORBID_REUSE, false); // Connection-pool for CURL
-
-    $this->curl = $curl;
-  }
-
   /**
    * Class destructor cleans up any resources
    */
@@ -67,7 +55,7 @@ class Request {
    * @see: http://www.php.net/manual/en/context.params.php
    *
    */
-  function http_head($uri) {
+  function head($uri) {
     curl_setopt($this->curl, CURLOPT_HEADER, 1);
 
     $full_url = $this->get_full_url($uri);
@@ -82,9 +70,6 @@ class Request {
     curl_setopt($this->curl, CURLOPT_HEADER, false);
 
     $resp_code = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
-    if ($resp_code == 404 ) {
-      throw new ZaphpaRestClientException("Couch document not found at: '$full_url'");
-    }
 
     if (function_exists('http_parse_headers')) {
       $headers = http_parse_headers($response);
@@ -122,8 +107,8 @@ class Request {
   /**
    * HTTP GET
    */
-  function http_get($uri, $data = array()) {
-    $data = (is_array($data)) ? http_build_query($data) : $data;
+  function get($uri) {
+    $data = (is_array($this->data)) ? http_build_query($this->data) : null;
     if (!empty($data)) {
       $uri .= "?$data";
     }
@@ -133,14 +118,21 @@ class Request {
   /**
    * HTTP PUT
    */
-  function http_put($uri, $data = array()) {
-    return $this->http_request('PUT', $uri, $data);
+  function put($uri) {
+    return $this->http_request('PUT', $uri, $this->data);
+  }
+
+  /**
+   * HTTP POST
+   */
+  function post($uri) {
+    return $this->http_request('POST', $uri, $this->data);
   }
 
   /**
    * HTTP DELETE
    */
-  function http_delete($uri, $data = array()) {
+  function delete($uri, $data = array()) {
     return $this->http_request('DELETE', $uri, $data);
   }
 
@@ -154,37 +146,116 @@ class Request {
    *  an array containing json and decoded versions of the response.
    */
   private function http_request($http_method, $uri, $data = array()) {
-    $data = (is_array($data)) ? http_build_query($data) : $data;
+    $data = (!empty($data) && is_array($data)) ? http_build_query($data) : '';
 
     if (!empty($data)) {
-      curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Length: ' . strlen($data)));
+      $this->set('Content-Length', strlen($data));
       curl_setopt($this->curl, CURLOPT_POSTFIELDS, $data);
     }
+
+    if ($http_method == 'POST' && isset($this->headers['Content-Type'])) {
+      unset($this->headers['Content-Type']);
+    }
+
+    // $this->headers is an associative array, to allow for overrides in set(), but
+    // curl_setopt() takes indexed array, so we need to convert.
+    $idxed_headers = array();
+    foreach ($this->headers as $name => $value) {
+      $idxed_headers[] = "$name: $value";
+    }
+
+    curl_setopt($this->curl, CURLOPT_HTTPHEADER, $idxed_headers);
 
     $full_url = $this->get_full_url($uri);
     curl_setopt($this->curl, CURLOPT_URL, $full_url);
     curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, $http_method);
 
     $response = curl_exec($this->curl);
-    $response_decoded = $this->decode_response($response);
-    $response = array('json' => $response, 'decoded'=>$response_decoded);
+    //$this->check_status($response, $full_url);
 
-    $this->check_status($response, $full_url);
+    return $response;
+  }
 
-    return (object)$response;
+  /**
+   * Get full URL from a partial one
+   */
+  private function get_full_url($uri) {
+    // We do not want "/", "?", "&" and "=" separators to be encoded!!!
+    $uri = str_replace(array('%2F', '%3F', '%3D', '%26'), array('/', '?', '=', '&'), urlencode($uri));
+    return $this->base_url . $uri;
+  }
+
+  /**
+   * Set an HTTP Head
+   */
+  public function set() {
+    if (func_num_args() == 1) {
+      $args = func_get_arg(0);
+      if (!is_array($args)) {
+        throw new RestAgentException("If you only pass one argument to set() it must be an array");
+      }
+
+      foreach ($args as $name => $value) {
+        $this->headers[$name] = $value;
+      }
+      return $this;
+    }
+
+    if (func_num_args() == 2) {
+      $name = func_get_arg(0);
+      $value = func_get_arg(1);
+      if (!is_string($name) || !(is_string($value) || is_numeric($value) || is_bool($value))) {
+        throw new RestAgentException("If you only pass two arguments to set(), first one must be a string and the second
+                                      one must be: a string, a number, or a boolean");
+      }
+      $this->headers[$name] = $value;
+      return $this;
+    }
+
+    throw new RestAgentException("set() method only accepts either one or two arguments");
+  }
+
+  /**
+   * Set a variable (query param or a data var)
+   */
+  public function add() {
+    if (func_num_args() == 1) {
+      $args = func_get_arg(0);
+      if (!is_array($args)) {
+        throw new RestAgentException("If you only pass one argument to add() it must be an array");
+      }
+
+      foreach ($args as $name => $value) {
+        $this->data[$name] = $value;
+      }
+      return $this;
+    }
+
+    if (func_num_args() == 2) {
+      $name = func_get_arg(0);
+      $value = func_get_arg(1);
+      if (!is_string($name) || !(is_string($value) || is_numeric($value) || is_bool($value))) {
+        throw new RestAgentException("If you only pass two arguments to set(), first one must be a string and the second
+                                      one must be: a string, a number, or a boolean");
+      }
+      $this->data[$name] = $value;
+      return $this;
+    }
+
+    throw new RestAgentException("add() method only accepts either one or two arguments");
   }
 
   /**
    * Check http status for safe return codes
    *
-   * @throws ZaphpaRestClientException
+   * @throws RestAgentException
    */
   private function check_status($response, $full_url) {
     $resp_code = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
 
     if ($resp_code < 199 || $resp_code > 399 || !empty($response['decoded']->error)) {
       $msg = "Server returned: \"HTTP 1.1. $resp_code\" \nURL: $full_url \nERROR: " . $response['json'];
-      throw new ZaphpaRestClientException($msg);
+      throw new RestAgentException($msg);
     }
   }
 
@@ -224,28 +295,6 @@ class Request {
     }
 
     return $ftype;
-  }
-
-
-  /**
-   *
-   * @param $json
-   *    json-encoded response
-   *
-   * @return
-   *    decoded PHP object
-   */
-  private function decode_response($json) {
-    return json_decode($json);
-  }
-
-  /**
-   * Get full URL from a partial one
-   */
-  private function get_full_url($uri) {
-    // We do not want "/", "?", "&" and "=" separators to be encoded!!!
-    $uri = str_replace(array('%2F', '%3F', '%3D', '%26'), array('/', '?', '=', '&'), urlencode($uri));
-    return $this->base_url . '/' . $uri;
   }
 
 }
