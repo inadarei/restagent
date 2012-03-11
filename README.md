@@ -17,13 +17,18 @@ Issue a simple HTTP GET:
     $request = new \restagent\Request;
     $response = $request->get("http://example.com/user/1");
 
+Little more drama, please:
+
+    $response = $request->set('Content-Type', 'application/json')
+                        ->set("X-API-Key", "aabbccdd")
+                        ->get("http://example.com/user/1");
+
 Assemble and send an HTTP POST:
 
     $request = new \restagent\Request;
-    $response = $request->set('Content-Type', 'application/json')
+    $response = $request->set("X-API-Key", "aabbccdd")
                         ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
                         ->add("hobby", "programming")
-                        ->set("X-API-Key", "aabbccdd")
                         ->set(array("foo" => "bar", "one" => "two"))
                         ->post("http://example.com/user");
 
