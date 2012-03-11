@@ -16,7 +16,9 @@ PHP 5.3 or newer.
 
 Issue a simple HTTP GET:
 
+    require_once('/path/to/restagent/restagent.lib.php');
     $request = new \restagent\Request;
+    
     $response = $request->get("http://example.com/user/1");
 
 Little more drama, please:
