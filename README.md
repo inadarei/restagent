@@ -30,6 +30,7 @@ Assemble and send an HTTP POST:
                     ->add(array("firstName" => "Irakli", "lastName" => "Nadareishvili"))
                     ->add("hobby", "programming")
                     ->set(array("User-Agent" => "RestAgent/1.0 php/libcurl", "foo" => "bar"))
+                    ->param("active", 1)
                     ->post("http://example.com/user");
 
 Using custom HTTP method and setting a custom timeout:
@@ -47,9 +48,11 @@ Where:
 
 * set() sets an HTTP header
 * add() sets a variable (query parameter in case of HTTP GET, or data variable in case of POST or PUT).
-* methods like get() and post() issue corresponding HTTP request.
-* method() sets a custom HTTP method to be used in conjuction with send() method.
-* timeout overrides the default timeout to a specified number of milliseconds.
+* param() allows setting query parameters for non-HTTP Get calls (i.e. when add() would set passed variables in request body).
+Caution: Do not use param() with HTTP GET or you will get an exception. Use add() instead!
+* head(), get(), post(), put() and delete() issue corresponding HTTP request.
+* method() sets a custom HTTP method to be used in conjuction with a send() call.
+* timeout() overrides the default timeout to a specified number of milliseconds.
 
 You can see in the example above that both add(), as well as set() methods take either an array or a single name/value
 pair as an argument. Why? Because it is convenient.

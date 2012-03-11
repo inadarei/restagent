@@ -15,13 +15,9 @@ class Request {
 
   const DEFAULT_TIMEOUT = 2000;
 
-  /**
-   * HTTP Timeout in Milliseconds
-   */
-  private $timeout = self::DEFAULT_TIMEOUT;
-
-  private $base_url;
+  private $base_url = '';
   private $data = array();
+  private $params = array();
   private $headers = array();
   private $method = '';
   private $curl;
@@ -39,7 +35,7 @@ class Request {
     curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($this->curl, CURLOPT_HEADER, 0);
     curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, 1);
-    curl_setopt($this->curl, CURLOPT_TIMEOUT_MS, $this->timeout);
+    curl_setopt($this->curl, CURLOPT_TIMEOUT_MS, self::DEFAULT_TIMEOUT);
     curl_setopt($this->curl, CURLOPT_FORBID_REUSE, false); // Connection-pool for CURL
 
   }
@@ -62,12 +58,12 @@ class Request {
   }
 
   /**
-   * Set timeout in milliseconds.
+   * Set curl/http timeout in milliseconds.
    *
    * @param $ms
    */
   public function timeout($ms) {
-    $this->timeout = $ms;
+    curl_setopt($this->curl, CURLOPT_TIMEOUT_MS, $ms);
     return $this;
   }
 
@@ -111,7 +107,6 @@ class Request {
     $this->data = array();
     $this->headers = array();
     $this->method = '';
-    $this->timeout = self::DEFAULT_TIMEOUT;
 
     // Restore default values
     curl_setopt($this->curl, CURLOPT_NOBODY, false);
@@ -127,7 +122,8 @@ class Request {
     return array(
       'code' => curl_getinfo($this->curl, CURLINFO_HTTP_CODE),
       'meta' => curl_getinfo($this->curl),
-      'data' => $headers);
+      'data' => $headers
+    );
   }
 
   /**
@@ -216,6 +212,11 @@ class Request {
    */
   private function http_request($http_method, $uri, $data = array()) {
     $data = (!empty($data) && is_array($data)) ? http_build_query($data) : '';
+    $http_method = strtoupper($http_method);
+
+    if ($http_method == 'GET' && !empty($this->params) && is_array($this->params)) {
+      throw new RestAgentException("You may not use param() when issuing an HTTP GET. Use add() instead!");
+    }
 
     if (!empty($data)) {
       $this->set('Content-Length', strlen($data));
@@ -232,6 +233,17 @@ class Request {
     curl_setopt($this->curl, CURLOPT_HTTPHEADER, $idxed_headers);
 
     $full_url = $this->get_full_url($uri);
+
+    // Sometimes you want to use query params with non-HTTP GET methods
+    if ($http_method != 'GET') {
+      $params = (is_array($this->params)) ? http_build_query($this->params) : null;
+      if (!empty($params)) {
+        $full_url .= "?$params";
+      }
+    }
+
+
+
     curl_setopt($this->curl, CURLOPT_URL, $full_url);
     curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, $http_method);
 
@@ -241,14 +253,14 @@ class Request {
     $this->data = array();
     $this->headers = array();
     $this->method = '';
-    $this->timeout = self::DEFAULT_TIMEOUT;
 
     //$this->check_status($response, $full_url);
 
     return array(
       'code' => curl_getinfo($this->curl, CURLINFO_HTTP_CODE),
       'meta' => curl_getinfo($this->curl),
-      'data' => $response);
+      'data' => $response
+    );
 
   }
 
@@ -311,7 +323,7 @@ class Request {
       $name = func_get_arg(0);
       $value = func_get_arg(1);
       if (!is_string($name) || !(is_string($value) || is_numeric($value) || is_bool($value))) {
-        throw new RestAgentException("If you only pass two arguments to set(), first one must be a string and the second
+        throw new RestAgentException("If you only pass two arguments to add(), first one must be a string and the second
                                       one must be: a string, a number, or a boolean");
       }
       $this->data[$name] = $value;
@@ -319,6 +331,37 @@ class Request {
     }
 
     throw new RestAgentException("add() method only accepts either one or two arguments");
+  }
+
+  /**
+   * Set a query param. This method can/should not be used with HTTP GET! Use var() call instead or you
+   * will get an exception
+   */
+  public function param() {
+    if (func_num_args() == 1) {
+      $args = func_get_arg(0);
+      if (!is_array($args)) {
+        throw new RestAgentException("If you only pass one argument to param() it must be an array");
+      }
+
+      foreach ($args as $name => $value) {
+        $this->params[$name] = $value;
+      }
+      return $this;
+    }
+
+    if (func_num_args() == 2) {
+      $name = func_get_arg(0);
+      $value = func_get_arg(1);
+      if (!is_string($name) || !(is_string($value) || is_numeric($value) || is_bool($value))) {
+        throw new RestAgentException("If you only pass two arguments to param(), first one must be a string and the second
+                                      one must be: a string, a number, or a boolean");
+      }
+      $this->params[$name] = $value;
+      return $this;
+    }
+
+    throw new RestAgentException("param() method only accepts either one or two arguments");
   }
 
   /**
