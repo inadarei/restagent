@@ -25,7 +25,6 @@ Little more drama, please:
 
 Assemble and send an HTTP POST:
 
-    $request = new \restagent\Request;
     $response = $request->set("X-API-Key", "aabbccdd")
                         ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
                         ->add("hobby", "programming")
