@@ -54,10 +54,10 @@ body rather than URL). **Caution**: Do not use param() with HTTP GET or you will
 * method() sets a custom HTTP method to be used in conjuction with a send() call.
 * timeout() overrides the default timeout to a specified number of milliseconds.
 
-You can see in the example above that both add(), as well as set() methods take either an array or a single name/value
-pair as an argument. Why? Because it is convenient.
+Please note that add(), param() and set() methods take either an array or a single name/value pair as an argument.
+Why? Because either can be convenient, in different cases.
 
-Furthermore, methods like ->get() and ->post() are just a convenience shortcut on calling ->method("get")->send(...);
+Furthermore, methods like ->get() and ->post() are just convenience shortcuts on calling ->method("get")->send(...);
 If you want to use any HTTP methods not included in the above list, try issuing ->method(...)->send();
 
 ## License
