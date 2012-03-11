@@ -48,8 +48,8 @@ Where:
 
 * set() sets an HTTP header
 * add() sets a variable (query parameter in case of HTTP GET, or data variable in case of POST or PUT).
-* param() allows setting query parameters for non-HTTP Get calls (i.e. when add() would set passed variables in request body).
-Caution: Do not use param() with HTTP GET or you will get an exception. Use add() instead!
+* param() allows setting query parameters for non-HTTP GET calls (i.e. when add() would set passed variables in request
+body rather than URL). **Caution**: Do not use param() with HTTP GET or you will get an exception. Use add() instead!
 * head(), get(), post(), put() and delete() issue corresponding HTTP request.
 * method() sets a custom HTTP method to be used in conjuction with a send() call.
 * timeout() overrides the default timeout to a specified number of milliseconds.
