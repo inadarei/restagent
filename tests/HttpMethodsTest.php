@@ -29,22 +29,34 @@ class HttpMethodsTest extends TestCase {
     $response = array();
     eval('$response = ' . $http_response['data'] . ";");
 
-    $get = $response['get'];
-    $get_vars_correct = ($get['firstName'] == 'irakli' &&
-                     $get['lastName'] == 'Nadareishvili' &&
-                     $get['hobby'] == 'programming');
-
     $this->assertEquals("GET", $response['server']['REQUEST_METHOD'],
       "Test of correct method transmitted for HTTP GET");
 
+    $get = $response['get'];
+    $get_vars_correct = ($get['firstName'] == 'irakli' &&
+                         $get['lastName'] == 'Nadareishvili' &&
+                         $get['hobby'] == 'programming');
+
     $this->assertEquals(true, $get_vars_correct,
-                        "Test of add() functioning properly for HTTP GET");
+      "Test of add() functioning properly for HTTP GET");
 
     $this->assertEquals("application/json", $response['server']['CONTENT_TYPE'],
       "Test1 (content-type) of set() functioning properly for HTTP GET");
 
     $this->assertEquals("bar", $response['server']['HTTP_FOO'],
       "Test2 (custom headers, passed as array) of set() functioning properly for HTTP GET");
+
+    try {
+      $this->request->set('Content-Type', 'application/json') // This is invalid
+        ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+        ->param("foo", "bar")
+        ->get("/somepath");
+    } catch (RestAgentException $ex) {
+      $this->assertTrue(true);
+      return;
+    }
+
+    $this->fail('You should not be able to call param() when trying to make a get() call.');
 
   }
 
@@ -103,6 +115,7 @@ class HttpMethodsTest extends TestCase {
         ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
         ->post("/somepath");
     } catch (RestAgentException $ex) {
+      $this->assertTrue(true);
       return;
     }
 
@@ -185,6 +198,8 @@ class HttpMethodsTest extends TestCase {
       ->add("hobby", "programming")
       ->set("X-API-Key", "aabbccdd")
       ->set(array("foo" => "bar", "User-Agent" => "CERN-LineMode/2.15 libwww/2.17b3"))
+      ->param("active", 1)
+      ->param(array("param1" => "foo", "param2" => "bar"))
       ->method("PATCH")
       ->timeout(1500)
       ->send("/somepath");
@@ -193,7 +208,7 @@ class HttpMethodsTest extends TestCase {
     eval('$response = ' . $http_response['data'] . ";");
 
     $this->assertEquals("PATCH", $response['server']['REQUEST_METHOD'],
-      "Test of correct method transmitted for HTTP DELETE");
+      "Test of correct method transmitted for HTTP PATCH  when using send()");
 
     $data = $response['PARSED_HTTP_DATA'];
     $data_vars_correct = ($data['firstName'] == 'irakli' &&
@@ -203,10 +218,15 @@ class HttpMethodsTest extends TestCase {
     $this->assertEquals(true, $data_vars_correct,
       "Test of add() functioning properly for HTTP PATCH issued via send()");
 
-    $this->assertEquals("PATCH", $response['server']['REQUEST_METHOD'],
-      "Test of correct method transmitted for HTTP PATCH when using send()");
+    $get = $response['get'];
+    $get_vars_correct = ($get['active'] == 1 &&
+      $get['param1'] == 'foo' &&
+      $get['param2'] == 'bar');
 
-    $this->assertEquals("/somepath", $response['server']['REQUEST_URI'],
+    $this->assertEquals(true, $get_vars_correct,
+      "Test of param() functioning properly for HTTP PATCH");
+
+    $this->assertEquals("/somepath?active=1&param1=foo&param2=bar", $response['server']['REQUEST_URI'],
       "Test of request_uri functioning properly for HTTP PATCH");
 
     $this->assertEquals("application/x-www-form-urlencoded", $response['server']['CONTENT_TYPE'],
@@ -220,6 +240,7 @@ class HttpMethodsTest extends TestCase {
         ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
         ->send("/somepath");
     } catch (RestAgentException $ex) {
+      $this->assertTrue(true);
       return;
     }
 
