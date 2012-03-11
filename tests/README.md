@@ -20,6 +20,8 @@ server {
     server_name  restagent.vm;
     root /path/to/restagent/code/tests;
 
+    index  index.php server.php;
+
 location / {
       if (!-e $request_filename) {
         rewrite ^/(.*)$ /server.php?q=$1 last;

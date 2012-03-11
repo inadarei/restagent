@@ -6,7 +6,42 @@ RestAgent is an HTTP client library for PHP. Project's primary goals are:
 
 RestAgent's API is inspired by the simplicity of the API in [SuperAgent](https://github.com/visionmedia/superagent) library for Node.js by TJ Holowaychuk.
 
+## Compatibility
+
+PHP 5.3 or newer.
+
 ## Quick Docs:
+
+Issue a simple HTTP GET:
+
+    $request = new \restagent\Request;
+    $request->get("http://example.com/user/1", function($response) {
+       print_r($response);
+       exit();
+    });
+
+Assemble and send an HTTP POST:
+
+    $request = new \restagent\Request;
+    $request->set('Accept', 'application/json')
+            ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+            ->add("hobby", "programming")
+            ->set("X-API-Key", "aabbccdd")
+            ->set(array("foo" => "bar", "one" => "two")
+            ->post("http://example.com/user", 'myCallback');
+
+    function myCallback($response) {
+        print_r($response);
+        exit();
+    }
+
+You can see in the example above that both add(), as well as set() methods take either an array or a single name/value
+pair as an argument. Why? Because it is convenient.
+
+Similarly, second argument of any HTTP-verb based methog ("get", "post", "put" or "delete") can take either a closure
+function, a callback function's name or an array where first element is an object and second: a method on that object.
+Furthermore, methods like ->get() and ->post() are just a convenience shortcut on calling ->method("get")->send(...); If
+you want to use any HTTP methods not included in the above list, try issuing ->method(...)->send();
 
 @TODO
 
