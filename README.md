@@ -12,6 +12,8 @@ PHP 5.3 or newer.
 
 ## Quick Docs:
 
+### Issuing a Request
+
 Issue a simple HTTP GET:
 
     $request = new \restagent\Request;
@@ -59,6 +61,16 @@ Why? Because either can be convenient, in different cases.
 
 Furthermore, methods like ->get() and ->post() are just convenience shortcuts on calling ->method("get")->send(...);
 If you want to use any HTTP methods not included in the above list, try issuing ->method(...)->send();
+
+### Response Format
+
+The head(), get(), post(), put(), delete() and send() calls return an associative array that has the following structure:
+
+* code: http response code.
+* meta: a whole bunch of meta-information about the call from CURL
+* data: response content for any http method except HTTP HEAD. The latter, by definition, does not return any content
+so 'data' contains parsed http response headers, instead.
+
 
 ## License
 
