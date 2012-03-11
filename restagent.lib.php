@@ -197,6 +197,11 @@ class Request {
     if (empty($this->method)) {
       throw new RestAgentException("You need to set a method, before calling send()");
     }
+
+    if ($this->method == "HEAD") {
+      throw new RestAgentException("Please use call to head() method instead of using send() for making HTTP HEAD calls");
+    }
+
     $this->method = strtoupper($this->method);
     return $this->http_request($this->method, $uri, $this->data);
   }

@@ -262,6 +262,24 @@ class HttpMethodsTest extends TestCase {
 
   }
 
+  public function test_send_denies_head_method() {
+
+    try {
+      $this->request
+        ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+        ->add("hobby", "programming")
+        ->set("X-API-Key", "aabbccdd")
+        ->param(array("param1" => "foo", "param2" => "bar"))
+        ->method("HEAD")
+        ->send("/somepath");
+    } catch (RestAgentException $ex) {
+      $this->assertTrue(true);
+      return;
+    }
+
+    $this->fail('You should not be able to call send() with HEAD as a method.');
+  }
+
   public function test_head() {
 
     $response = $this->request
