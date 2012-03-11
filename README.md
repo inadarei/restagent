@@ -41,10 +41,8 @@ Where:
 You can see in the example above that both add(), as well as set() methods take either an array or a single name/value
 pair as an argument. Why? Because it is convenient.
 
-<!--
 Furthermore, methods like ->get() and ->post() are just a convenience shortcut on calling ->method("get")->send(...);
 If you want to use any HTTP methods not included in the above list, try issuing ->method(...)->send();
--->
 
 ## License
 

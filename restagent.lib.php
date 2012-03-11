@@ -63,13 +63,29 @@ class Request {
     curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'HEAD');
     curl_setopt($this->curl, CURLOPT_NOBODY, true);
 
+    // $this->headers is an associative array, to allow for overrides in set(), but
+    // curl_setopt() takes indexed array, so we need to convert.
+    $idxed_headers = array();
+    foreach ($this->headers as $name => $value) {
+      $idxed_headers[] = "$name: $value";
+    }
+    curl_setopt($this->curl, CURLOPT_HTTPHEADER, $idxed_headers);
+
+    if (!empty($this->data) && is_array($this->data)) {
+      $data = http_build_query($this->data);
+      $this->set('Content-Length', strlen($data));
+      curl_setopt($this->curl, CURLOPT_POSTFIELDS, $data);
+    }
 
     $response = curl_exec($this->curl);
+
+    //reset $this->data and $this->headers to allow clean re-use of the request object
+    $this->data = array();
+    $this->headers = array();
+
     // Restore default values
     curl_setopt($this->curl, CURLOPT_NOBODY, false);
     curl_setopt($this->curl, CURLOPT_HEADER, false);
-
-    $resp_code = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
 
     if (function_exists('http_parse_headers')) {
       $headers = http_parse_headers($response);
@@ -78,7 +94,9 @@ class Request {
       $headers = $this->_http_parse_headers($response);
     }
 
-    return $headers;
+    return array('code' => curl_getinfo($this->curl, CURLINFO_HTTP_CODE),
+                 'meta' => curl_getinfo($this->curl),
+                 'data' => $headers);
   }
 
   /**
@@ -138,8 +156,19 @@ class Request {
   /**
    * HTTP DELETE
    */
-  function delete($uri, $data = array()) {
-    return $this->http_request('DELETE', $uri, $data);
+  function delete($uri) {
+    return $this->http_request('DELETE', $uri, $this->data);
+  }
+
+  /**
+   * Custom HTTP Method. Use with caution.
+   *
+   * @param $uri
+   * @param $method
+   */
+  function send($uri, $method) {
+    $method = strtoupper($method);
+    return $this->http_request($method, $uri, $this->data);
   }
 
   /**
@@ -159,10 +188,6 @@ class Request {
       curl_setopt($this->curl, CURLOPT_POSTFIELDS, $data);
     }
 
-    if ($http_method == 'POST' && isset($this->headers['Content-Type'])) {
-      unset($this->headers['Content-Type']);
-    }
-
     // $this->headers is an associative array, to allow for overrides in set(), but
     // curl_setopt() takes indexed array, so we need to convert.
     $idxed_headers = array();
@@ -177,9 +202,18 @@ class Request {
     curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, $http_method);
 
     $response = curl_exec($this->curl);
+
+    //reset $this->data and $this->headers to allow clean re-use of the request object
+    $this->data = array();
+    $this->headers = array();
+
     //$this->check_status($response, $full_url);
 
-    return $response;
+    return array(
+      'code' => curl_getinfo($this->curl, CURLINFO_HTTP_CODE),
+      'meta' => curl_getinfo($this->curl),
+      'data' => $response);
+
   }
 
   /**

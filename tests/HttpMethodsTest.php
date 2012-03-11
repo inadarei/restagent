@@ -19,30 +19,31 @@ class HttpMethodsTest extends TestCase {
 
   public function test_get() {
 
-    $response = $this->request->set('Content-Type', 'application/json')
+    $http_response = $this->request->set('Content-Type', 'application/json')
       ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
       ->add("hobby", "programming")
       ->set("X-API-Key", "aabbccdd")
       ->set(array("foo" => "bar", "one" => "two"))
       ->get("/somepath");
 
-    eval('$response = ' . "$response;");
+    $response = array();
+    eval('$response = ' . $http_response['data'] . ";");
 
     $get = $response['get'];
     $get_vars_correct = ($get['firstName'] == 'irakli' &&
                      $get['lastName'] == 'Nadareishvili' &&
                      $get['hobby'] == 'programming');
 
-    $this->assertEquals($response['server']['REQUEST_METHOD'], "GET",
+    $this->assertEquals("GET", $response['server']['REQUEST_METHOD'],
       "Test of correct method transmitted for HTTP GET");
 
-    $this->assertEquals($get_vars_correct, true,
+    $this->assertEquals(true, $get_vars_correct,
                         "Test of add() functioning properly for HTTP GET");
 
-    $this->assertEquals($response['server']['CONTENT_TYPE'], "application/json",
+    $this->assertEquals("application/json", $response['server']['CONTENT_TYPE'],
       "Test1 (content-type) of set() functioning properly for HTTP GET");
 
-    $this->assertEquals($response['server']['HTTP_FOO'], "bar",
+    $this->assertEquals("bar", $response['server']['HTTP_FOO'],
       "Test2 (custom headers, passed as array) of set() functioning properly for HTTP GET");
 
   }
@@ -53,42 +54,44 @@ class HttpMethodsTest extends TestCase {
    */
   public function test_post() {
 
-    $response = $this->request
+    $http_response = $this->request
       ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
       ->add("hobby", "programming")
       ->set("X-API-Key", "aabbccdd")
       ->set(array("foo" => "bar", "one" => "two"))
       ->post("/somepath");
 
-    eval('$response = ' . "$response;");
+    $response = array();
+    eval('$response = ' . $http_response['data'] . ";");
 
     $this->assertEquals($response['server']['REQUEST_METHOD'],"POST",
       "Test of correct method transmitted for HTTP POST");
 
-    $post = $response['post'];
-    $post_vars_correct = ($post['firstName'] == 'irakli' &&
-      $post['lastName'] == 'Nadareishvili' &&
-      $post['hobby'] == 'programming');
+    $data = $response['post'];
+    $data_vars_correct = ($data['firstName'] == 'irakli' &&
+      $data['lastName'] == 'Nadareishvili' &&
+      $data['hobby'] == 'programming');
 
-    $this->assertEquals($post_vars_correct, true,
+    $this->assertEquals(true, $data_vars_correct,
       "Test of add() functioning properly for HTTP POST");
 
-    $this->assertEquals($response['server']['CONTENT_TYPE'],"application/x-www-form-urlencoded",
+
+    $this->assertEquals("application/x-www-form-urlencoded", $response['server']['CONTENT_TYPE'],
       "Test1 (content-type) of set() functioning properly for HTTP POST");
 
-    $this->assertEquals($response['server']['HTTP_FOO'],"bar",
+    $this->assertEquals("bar",$response['server']['HTTP_FOO'],
       "Test2 (custom headers, passed as array) of set() functioning properly for HTTP POST");
   }
 
   public function test_post_disallow_content_type() {
-    $response = $this->request->set('Content-Type', 'application/x-www-form-urlencoded') // This is invalid
+    $this->request->set('Content-Type', 'application/x-www-form-urlencoded') // This is valid
       ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
       ->post("/somepath");
 
     $this->assertEquals(true, true,
       "Test1 (Indicating Content-Type: application/x-www-form-urlencoded in HTTP POST is allowed");
 
-    $response = $this->request->set('Content-Type', 'multipart/form-data') // This is invalid
+    $this->request->set('Content-Type', 'multipart/form-data') // This is valid
       ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
       ->post("/somepath");
 
@@ -96,70 +99,119 @@ class HttpMethodsTest extends TestCase {
       "Test1 (Indicating Content-Type: multipart/form-data in HTTP POST is allowed");
 
     try {
-      $response = $this->request->set('Content-Type', 'application/json') // This is invalid
+      $this->request->set('Content-Type', 'application/json') // This is invalid
         ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
         ->post("/somepath");
     } catch (RestAgentException $ex) {
       return;
     }
 
-      $this->fail('Setting a bogus Content-Type should not have passed.');
+    $this->fail('Setting a bogus Content-Type should not have passed.');
 
   }
 
 
   public function test_put() {
 
-    $response = $this->request
+    $http_response = $this->request
       ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
       ->add("hobby", "programming")
       ->set("X-API-Key", "aabbccdd")
       ->set(array("foo" => "bar", "one" => "two"))
       ->put("/somepath");
 
-    eval('$response = ' . "$response;");
+    $response = array();
+    eval('$response = ' . $http_response['data'] . ";");
 
-    $this->assertEquals($response['server']['REQUEST_METHOD'],"PUT",
+    $this->assertEquals("PUT", $response['server']['REQUEST_METHOD'],
       "Test of correct method transmitted for HTTP PUT");
 
-    $put = $response['PARSED_HTTP_DATA'];
-    $put_vars_correct = ($put['firstName'] == 'irakli' &&
-    $put['lastName'] == 'Nadareishvili' &&
-    $put['hobby'] == 'programming');
+    $data = $response['PARSED_HTTP_DATA'];
+    $data_vars_correct = ($data['firstName'] == 'irakli' &&
+      $data['lastName'] == 'Nadareishvili' &&
+      $data['hobby'] == 'programming');
 
-    $this->assertEquals($put_vars_correct, true,
+    $this->assertEquals(true, $data_vars_correct,
       "Test of add() functioning properly for HTTP PUT");
 
-    $this->assertEquals($response['server']['CONTENT_TYPE'],"application/x-www-form-urlencoded",
+    $this->assertEquals("application/x-www-form-urlencoded", $response['server']['CONTENT_TYPE'],
       "Test1 (content-type) of set() functioning properly for HTTP PUT");
 
-    $this->assertEquals($response['server']['HTTP_FOO'],"bar",
+    $this->assertEquals("bar", $response['server']['HTTP_FOO'],
       "Test2 (custom headers, passed as array) of set() functioning properly for HTTP PUT");
 
   }
 
   public function test_delete() {
 
-    $response = $this->request
+    $http_response = $this->request
       ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
       ->add("hobby", "programming")
       ->set("X-API-Key", "aabbccdd")
       ->set(array("foo" => "bar", "User-Agent" => "CERN-LineMode/2.15 libwww/2.17b3"))
       ->delete("/somepath");
 
-    eval('$response = ' . "$response;");
+    $response = array();
+    eval('$response = ' . $http_response['data'] . ";");
 
-    $this->assertEquals($response['server']['REQUEST_METHOD'],"DELETE",
+    $this->assertEquals("DELETE", $response['server']['REQUEST_METHOD'],
       "Test of correct method transmitted for HTTP DELETE");
 
-    $this->assertEquals($response['server']['REQUEST_URI'],"/somepath",
+    $data = $response['PARSED_HTTP_DATA'];
+    $data_vars_correct = ($data['firstName'] == 'irakli' &&
+                          $data['lastName'] == 'Nadareishvili' &&
+                          $data['hobby'] == 'programming');
+
+    $this->assertEquals(true, $data_vars_correct,
+      "Test of add() functioning properly for HTTP DELETE");
+
+    $this->assertEquals("/somepath", $response['server']['REQUEST_URI'],
       "Test of request_uri functioning properly for HTTP DELETE");
 
-    $this->assertEquals($response['server']['CONTENT_TYPE'],"",
+    $this->assertEquals("application/x-www-form-urlencoded", $response['server']['CONTENT_TYPE'],
       "Test1 (content-type) of set() functioning properly for HTTP DELETE");
 
-    $this->assertEquals($response['server']['HTTP_USER_AGENT'],"CERN-LineMode/2.15 libwww/2.17b3",
+    $this->assertEquals("CERN-LineMode/2.15 libwww/2.17b3", $response['server']['HTTP_USER_AGENT'],
       "Test2 (custom headers, passed as array) of set() functioning properly for HTTP DELETE");
+
+  }
+
+  public function test_send() {
+
+    //-- Using "PATCH" as a custom method
+
+    $http_response = $this->request
+      ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+      ->add("hobby", "programming")
+      ->set("X-API-Key", "aabbccdd")
+      ->set(array("foo" => "bar", "User-Agent" => "CERN-LineMode/2.15 libwww/2.17b3"))
+      ->send("/somepath", "PATCH");
+
+    $response = array();
+    eval('$response = ' . $http_response['data'] . ";");
+
+    $this->assertEquals("PATCH", $response['server']['REQUEST_METHOD'],
+      "Test of correct method transmitted for HTTP DELETE");
+
+    $data = $response['PARSED_HTTP_DATA'];
+    $data_vars_correct = ($data['firstName'] == 'irakli' &&
+      $data['lastName'] == 'Nadareishvili' &&
+      $data['hobby'] == 'programming');
+
+    $this->assertEquals(true, $data_vars_correct,
+      "Test of add() functioning properly for HTTP PATCH issued via send()");
+
+    $this->assertEquals("PATCH", $response['server']['REQUEST_METHOD'],
+      "Test of correct method transmitted for HTTP PATCH when using send()");
+
+    $this->assertEquals("/somepath", $response['server']['REQUEST_URI'],
+      "Test of request_uri functioning properly for HTTP PATCH");
+
+    $this->assertEquals("application/x-www-form-urlencoded", $response['server']['CONTENT_TYPE'],
+      "Test1 (content-type) of set() functioning properly for HTTP PATCH");
+
+    $this->assertEquals("CERN-LineMode/2.15 libwww/2.17b3", $response['server']['HTTP_USER_AGENT'],
+      "Test2 (custom headers, passed as array) of set() functioning properly for HTTP PATCH");
 
   }
 
@@ -172,10 +224,10 @@ class HttpMethodsTest extends TestCase {
       ->set(array("foo" => "bar", "User-Agent" => "CERN-LineMode/2.15 libwww/2.17b3"))
       ->head("/somepath");
 
-    $this->assertEquals($response['Content-Type'],"text/plain",
+    $this->assertEquals($response['data']['Content-Type'],"text/plain",
       "Test of Content-type header for HTTP HEAD");
 
-    $this->assertEquals($response['Some-Foo-Header'],"to/check/with/head/request",
+    $this->assertEquals($response['data']['Some-Foo-Header'],"to/check/with/head/request",
       "Test of Some-Foo-Header for HTTP HEAD ");
 
   }
