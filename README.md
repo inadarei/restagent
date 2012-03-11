@@ -43,8 +43,6 @@ function, a callback function's name or an array where first element is an objec
 Furthermore, methods like ->get() and ->post() are just a convenience shortcut on calling ->method("get")->send(...); If
 you want to use any HTTP methods not included in the above list, try issuing ->method(...)->send();
 
-@TODO
-
 ## License
 
 (The MIT License)
