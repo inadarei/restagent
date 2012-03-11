@@ -28,7 +28,7 @@ Assemble and send an HTTP POST:
     $response = $request->set("X-API-Key", "aabbccdd")
                         ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
                         ->add("hobby", "programming")
-                        ->set(array("foo" => "bar", "one" => "two"))
+                        ->set(array("User-Agent" => "RestAgent/1.0 php/libcurl", "foo" => "bar"))
                         ->post("http://example.com/user");
 
 Where:

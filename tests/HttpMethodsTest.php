@@ -81,4 +81,59 @@ class HttpMethodsTest extends TestCase {
 
   }
 
+  public function test_put() {
+
+    $response = $this->request
+      ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+      ->add("hobby", "programming")
+      ->set("X-API-Key", "aabbccdd")
+      ->set(array("foo" => "bar", "one" => "two"))
+      ->put("/somepath");
+
+    eval('$response = ' . "$response;");
+
+    $this->assertEquals($response['server']['REQUEST_METHOD'],"PUT",
+      "Test of correct method transmitted for HTTP PUT");
+
+    $put = $response['PARSED_HTTP_DATA'];
+    $put_vars_correct = ($put['firstName'] == 'irakli' &&
+    $put['lastName'] == 'Nadareishvili' &&
+    $put['hobby'] == 'programming');
+
+    $this->assertEquals($put_vars_correct, true,
+      "Test of add() functioning properly for HTTP PUT");
+
+    $this->assertEquals($response['server']['CONTENT_TYPE'],"application/x-www-form-urlencoded",
+      "Test1 (content-type) of set() functioning properly for HTTP PUT");
+
+    $this->assertEquals($response['server']['HTTP_FOO'],"bar",
+      "Test2 (custom headers, passed as array) of set() functioning properly for HTTP PUT");
+
+  }
+
+  public function test_delete() {
+
+    $response = $this->request
+      ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+      ->add("hobby", "programming")
+      ->set("X-API-Key", "aabbccdd")
+      ->set(array("foo" => "bar", "User-Agent" => "CERN-LineMode/2.15 libwww/2.17b3"))
+      ->delete("/somepath");
+
+    eval('$response = ' . "$response;");
+
+    $this->assertEquals($response['server']['REQUEST_METHOD'],"DELETE",
+      "Test of correct method transmitted for HTTP DELETE");
+
+    $this->assertEquals($response['server']['REQUEST_URI'],"/somepath",
+      "Test of request_uri functioning properly for HTTP DELETE");
+
+    $this->assertEquals($response['server']['CONTENT_TYPE'],"",
+      "Test1 (content-type) of set() functioning properly for HTTP DELETE");
+
+    $this->assertEquals($response['server']['HTTP_USER_AGENT'],"CERN-LineMode/2.15 libwww/2.17b3",
+      "Test2 (custom headers, passed as array) of set() functioning properly for HTTP DELETE");
+
+  }
+
 }
