@@ -35,11 +35,18 @@ Assemble and send an HTTP POST:
         exit();
     }
 
+Where:
+
+* set() sets an HTTP header
+* add() sets a variable (query parameter in case of HTTP GET, or data variable in case of POST or PUT).
+* methods like get() and post() issue corresponding HTTP request.
+
 You can see in the example above that both add(), as well as set() methods take either an array or a single name/value
 pair as an argument. Why? Because it is convenient.
 
 Similarly, second argument of any HTTP-verb based methog ("get", "post", "put" or "delete") can take either a closure
 function, a callback function's name or an array where first element is an object and second: a method on that object.
+
 Furthermore, methods like ->get() and ->post() are just a convenience shortcut on calling ->method("get")->send(...); If
 you want to use any HTTP methods not included in the above list, try issuing ->method(...)->send();
 
