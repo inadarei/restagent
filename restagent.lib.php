@@ -126,6 +126,12 @@ class Request {
    * HTTP POST
    */
   function post($uri) {
+    if (!empty($this->headers['Content-Type']) &&
+        !in_array($this->headers['Content-Type'], array('application/x-www-form-urlencoded', 'multipart/form-data'))) {
+
+      throw new RestAgentException("You should not set content-type for HTTP POST that is not either
+                                   'application/x-www-form-urlencoded' or 'multipart/form-data'");
+    }
     return $this->http_request('POST', $uri, $this->data);
   }
 

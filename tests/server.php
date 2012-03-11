@@ -1,5 +1,6 @@
 <?php
 
+header("Some-foo-header: to/check/with/head/request");
 header("Content-type: text/plain", TRUE, 200);
 $out = array();
 

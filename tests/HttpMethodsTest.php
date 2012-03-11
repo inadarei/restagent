@@ -53,7 +53,7 @@ class HttpMethodsTest extends TestCase {
    */
   public function test_post() {
 
-    $response = $this->request->set('Content-Type', 'application/json') // This is actually invalid, but we silently fix it
+    $response = $this->request
       ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
       ->add("hobby", "programming")
       ->set("X-API-Key", "aabbccdd")
@@ -78,8 +78,35 @@ class HttpMethodsTest extends TestCase {
 
     $this->assertEquals($response['server']['HTTP_FOO'],"bar",
       "Test2 (custom headers, passed as array) of set() functioning properly for HTTP POST");
+  }
+
+  public function test_post_disallow_content_type() {
+    $response = $this->request->set('Content-Type', 'application/x-www-form-urlencoded') // This is invalid
+      ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+      ->post("/somepath");
+
+    $this->assertEquals(true, true,
+      "Test1 (Indicating Content-Type: application/x-www-form-urlencoded in HTTP POST is allowed");
+
+    $response = $this->request->set('Content-Type', 'multipart/form-data') // This is invalid
+      ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+      ->post("/somepath");
+
+    $this->assertEquals(true, true,
+      "Test1 (Indicating Content-Type: multipart/form-data in HTTP POST is allowed");
+
+    try {
+      $response = $this->request->set('Content-Type', 'application/json') // This is invalid
+        ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+        ->post("/somepath");
+    } catch (RestAgentException $ex) {
+      return;
+    }
+
+      $this->fail('Setting a bogus Content-Type should not have passed.');
 
   }
+
 
   public function test_put() {
 
@@ -133,6 +160,23 @@ class HttpMethodsTest extends TestCase {
 
     $this->assertEquals($response['server']['HTTP_USER_AGENT'],"CERN-LineMode/2.15 libwww/2.17b3",
       "Test2 (custom headers, passed as array) of set() functioning properly for HTTP DELETE");
+
+  }
+
+  public function test_head() {
+
+    $response = $this->request
+      ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+      ->add("hobby", "programming")
+      ->set("X-API-Key", "aabbccdd")
+      ->set(array("foo" => "bar", "User-Agent" => "CERN-LineMode/2.15 libwww/2.17b3"))
+      ->head("/somepath");
+
+    $this->assertEquals($response['Content-Type'],"text/plain",
+      "Test of Content-type header for HTTP HEAD");
+
+    $this->assertEquals($response['Some-Foo-Header'],"to/check/with/head/request",
+      "Test of Some-Foo-Header for HTTP HEAD ");
 
   }
 
