@@ -73,11 +73,11 @@ do it. Therefore it's important, as a general rule, to be able to set request da
 which  we can make appropriate HTTP-verb call (whether it's GET or PUT or whatever else), without having to worry 
 about the specifics of the verb's way of encoding data (in the URL or HTTP Body).
 
-That said, sometimes people need to add HTTP query params even during an HTTP call that encodes variables in HTTP
-body (e.g. POST or PUT). Whether we like it or not, consider it RESTful or not, it's allowed in HTTP and a necessary
-"evil" sometimes. That is why param() exists, to allow for such use-cases.
+That said, sometimes we do need to add HTTP query params even during an HTTP call that encodes variables in an HTTP
+body (e.g. POST or PUT). Whether we consider it RESTful or not, it's allowed in HTTP and can be a necessary
+"evil" sometimes. That is why param() exists: to allow for such use-cases.
 
-However, we do not allow using param() with HTTP GET, because add() method already does what it would do and it would
+However, we do not allow using param() with HTTP GET, because add() method already does what param() would do and it would
 be confusing to get in the business of deciding which method gets priority or how variables are merged if somebody
 decides to set the same variable through both param() and add().
 
