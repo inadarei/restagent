@@ -64,6 +64,29 @@ Why? Because either can be convenient, in different cases.
 Furthermore, methods like ->get() and ->post() are just convenience shortcuts on calling ->method("get")->send(...);
 If you want to use any HTTP methods not included in the above list, try issuing ->method(...)->send();
 
+### Why param(), again?
+
+The purpose of the param() method can be confusing and may need further explanation. 
+
+In the puristic RESTful view, we want to have a uniform way of making HTTP calls and pass variables as we
+do it. Therefore it's important, as a general rule, to be able to set request data with a uniform add() method. After 
+which  we can make appropriate HTTP-verb call (whether it's GET or PUT or whatever else), without having to worry 
+about the specifics of the verb's way of encoding data (in the URL or HTTP Body).
+
+That said, sometimes people need to add HTTP query params even during an HTTP call that encodes variables in HTTP
+body (e.g. POST or PUT). Whether we like it or not, consider it RESTful or not, it's allowed in HTTP and a necessary
+"evil" sometimes. That is why param() exists, to allow for such use-cases.
+
+However, we do not allow using param() with HTTP GET, because add() method already does what it would do and it would
+be confusing to get in the business of deciding which method gets priority or how variables are merged if somebody
+decides to set the same variable through both param() and add().
+
+That is why an attempt to use param() during an HTTP GET call results in an exception, the exception basically
+indicates: "we gave you a way to shortcut the system during POST, PUT etc, now don't be assinine and don't try to
+use it for GET, where you really should not be using it".
+
+So that's the very long story of param() and its relation to add()...
+
 ### Response Format
 
 The head(), get(), post(), put(), delete() and send() calls return an associative array that has the following structure:
