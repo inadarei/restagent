@@ -82,7 +82,7 @@ be confusing to get in the business of deciding which method gets priority or ho
 decides to set the same variable through both param() and add().
 
 That is why an attempt to use param() during an HTTP GET call results in an exception, the exception basically
-indicates: "we gave you a way to shortcut the system during POST, PUT etc, now don't be assinine and don't try to
+indicates: "we gave you a way to shortcut the system during POST, PUT etc, now don't be asinine and don't try to
 use it for GET, where you really should not be using it".
 
 So that's the very long story of param() and its relation to add()...
