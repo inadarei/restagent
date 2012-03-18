@@ -23,17 +23,17 @@ Issue a simple HTTP GET:
 
 Little more drama, please:
 
-    $response = $request->set('Content-Type', 'application/json')
-                        ->set("X-API-Key", "aabbccdd")
+    $response = $request->header('Content-Type', 'application/json')
+                        ->header("X-API-Key", "aabbccdd")
                         ->get("http://example.com/user/1");
 
 Assemble and send an HTTP POST:
 
     $response = $request
-                    ->set("X-API-Key", "aabbccdd")
+                    ->header("X-API-Key", "aabbccdd")
                     ->add(array("firstName" => "Irakli", "lastName" => "Nadareishvili"))
                     ->add("hobby", "programming")
-                    ->set(array("User-Agent" => "RestAgent/1.0 php/libcurl", "foo" => "bar"))
+                    ->header(array("User-Agent" => "RestAgent/1.0 php/libcurl", "foo" => "bar"))
                     ->param("active", 1)
                     ->post("http://example.com/user");
 
@@ -41,8 +41,8 @@ Using custom HTTP method and setting a custom timeout:
 
     $response = $request
                     ->add(array("firstName" => "Irakli", "lastName" => "Nadareishvili"))
-                    ->set("X-API-Key", "aabbccdd")
-                    ->set(array("User-Agent" => "CERN-LineMode/2.15 libwww/2.17b3"))
+                    ->header("X-API-Key", "aabbccdd")
+                    ->header(array("User-Agent" => "CERN-LineMode/2.15 libwww/2.17b3"))
                     ->method("PATCH")
                     ->timeout(500)
                     ->send("/user/1");

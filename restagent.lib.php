@@ -97,7 +97,7 @@ class Request {
 
     if (!empty($this->data) && is_array($this->data)) {
       $data = http_build_query($this->data);
-      $this->set('Content-Length', strlen($data));
+      $this->header('Content-Length', strlen($data));
       curl_setopt($this->curl, CURLOPT_POSTFIELDS, $data);
     }
 
@@ -224,7 +224,7 @@ class Request {
     }
 
     if (!empty($data)) {
-      $this->set('Content-Length', strlen($data));
+      $this->header('Content-Length', strlen($data));
       curl_setopt($this->curl, CURLOPT_POSTFIELDS, $data);
     }
 
@@ -281,7 +281,7 @@ class Request {
   /**
    * Set an HTTP Head
    */
-  public function set() {
+  public function header() {
     if (func_num_args() == 1) {
       $args = func_get_arg(0);
       if (!is_array($args)) {
