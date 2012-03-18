@@ -20,8 +20,8 @@ class HttpMethodsTest extends TestCase {
   public function test_get() {
 
     $http_response = $this->request->header('Content-Type', 'application/json')
-      ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
-      ->add("hobby", "programming")
+      ->data(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+      ->data("hobby", "programming")
       ->header("X-API-Key", "aabbccdd")
       ->header(array("foo" => "bar", "one" => "two"))
       ->get("/somepath");
@@ -38,17 +38,17 @@ class HttpMethodsTest extends TestCase {
                          $get['hobby'] == 'programming');
 
     $this->assertEquals(true, $get_vars_correct,
-      "Test of add() functioning properly for HTTP GET");
+      "Test of data() functioning properly for HTTP GET");
 
     $this->assertEquals("application/json", $response['server']['CONTENT_TYPE'],
-      "Test1 (content-type) of set() functioning properly for HTTP GET");
+      "Test1 (content-type) of header() functioning properly for HTTP GET");
 
     $this->assertEquals("bar", $response['server']['HTTP_FOO'],
-      "Test2 (custom headers, passed as array) of set() functioning properly for HTTP GET");
+      "Test2 (custom headers, passed as array) of header() functioning properly for HTTP GET");
 
     try {
       $this->request->header('Content-Type', 'application/json') // This is invalid
-        ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+        ->data(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
         ->param("foo", "bar")
         ->get("/somepath");
     } catch (RestAgentException $ex) {
@@ -65,7 +65,7 @@ class HttpMethodsTest extends TestCase {
     $req = new \restagent\Request;
 
     $resp = $req->header('Content-Type', 'text/plain')
-      ->add("q", "restagent")
+      ->data("q", "restagent")
       ->get("http://www.bing.com/search");
 
     $this->assertEquals("http://www.bing.com/search?q=restagent", $resp['meta']['url']);
@@ -80,8 +80,8 @@ class HttpMethodsTest extends TestCase {
   public function test_post() {
 
     $http_response = $this->request
-      ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
-      ->add("hobby", "programming")
+      ->data(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+      ->data("hobby", "programming")
       ->header("X-API-Key", "aabbccdd")
       ->header(array("foo" => "bar", "one" => "two"))
       ->post("/somepath");
@@ -98,26 +98,26 @@ class HttpMethodsTest extends TestCase {
       $data['hobby'] == 'programming');
 
     $this->assertEquals(true, $data_vars_correct,
-      "Test of add() functioning properly for HTTP POST");
+      "Test of data() functioning properly for HTTP POST");
 
 
     $this->assertEquals("application/x-www-form-urlencoded", $response['server']['CONTENT_TYPE'],
-      "Test1 (content-type) of set() functioning properly for HTTP POST");
+      "Test1 (content-type) of header() functioning properly for HTTP POST");
 
     $this->assertEquals("bar",$response['server']['HTTP_FOO'],
-      "Test2 (custom headers, passed as array) of set() functioning properly for HTTP POST");
+      "Test2 (custom headers, passed as array) of header() functioning properly for HTTP POST");
   }
 
   public function test_post_disallow_content_type() {
     $this->request->header('Content-Type', 'application/x-www-form-urlencoded') // This is valid
-      ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+      ->data(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
       ->post("/somepath");
 
     $this->assertEquals(true, true,
       "Test1 (Indicating Content-Type: application/x-www-form-urlencoded in HTTP POST is allowed");
 
     $this->request->header('Content-Type', 'multipart/form-data') // This is valid
-      ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+      ->data(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
       ->post("/somepath");
 
     $this->assertEquals(true, true,
@@ -125,7 +125,7 @@ class HttpMethodsTest extends TestCase {
 
     try {
       $this->request->header('Content-Type', 'application/json') // This is invalid
-        ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+        ->data(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
         ->post("/somepath");
     } catch (RestAgentException $ex) {
       $this->assertTrue(true);
@@ -140,8 +140,8 @@ class HttpMethodsTest extends TestCase {
   public function test_put() {
 
     $http_response = $this->request
-      ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
-      ->add("hobby", "programming")
+      ->data(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+      ->data("hobby", "programming")
       ->header("X-API-Key", "aabbccdd")
       ->header(array("foo" => "bar", "one" => "two"))
       ->put("/somepath");
@@ -158,21 +158,21 @@ class HttpMethodsTest extends TestCase {
       $data['hobby'] == 'programming');
 
     $this->assertEquals(true, $data_vars_correct,
-      "Test of add() functioning properly for HTTP PUT");
+      "Test of data() functioning properly for HTTP PUT");
 
     $this->assertEquals("application/x-www-form-urlencoded", $response['server']['CONTENT_TYPE'],
-      "Test1 (content-type) of set() functioning properly for HTTP PUT");
+      "Test1 (content-type) of header() functioning properly for HTTP PUT");
 
     $this->assertEquals("bar", $response['server']['HTTP_FOO'],
-      "Test2 (custom headers, passed as array) of set() functioning properly for HTTP PUT");
+      "Test2 (custom headers, passed as array) of header() functioning properly for HTTP PUT");
 
   }
 
   public function test_delete() {
 
     $http_response = $this->request
-      ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
-      ->add("hobby", "programming")
+      ->data(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+      ->data("hobby", "programming")
       ->header("X-API-Key", "aabbccdd")
       ->header(array("foo" => "bar", "User-Agent" => "CERN-LineMode/2.15 libwww/2.17b3"))
       ->delete("/somepath");
@@ -189,16 +189,16 @@ class HttpMethodsTest extends TestCase {
                           $data['hobby'] == 'programming');
 
     $this->assertEquals(true, $data_vars_correct,
-      "Test of add() functioning properly for HTTP DELETE");
+      "Test of data() functioning properly for HTTP DELETE");
 
     $this->assertEquals("/somepath", $response['server']['REQUEST_URI'],
       "Test of request_uri functioning properly for HTTP DELETE");
 
     $this->assertEquals("application/x-www-form-urlencoded", $response['server']['CONTENT_TYPE'],
-      "Test1 (content-type) of set() functioning properly for HTTP DELETE");
+      "Test1 (content-type) of header() functioning properly for HTTP DELETE");
 
     $this->assertEquals("CERN-LineMode/2.15 libwww/2.17b3", $response['server']['HTTP_USER_AGENT'],
-      "Test2 (custom headers, passed as array) of set() functioning properly for HTTP DELETE");
+      "Test2 (custom headers, passed as array) of header() functioning properly for HTTP DELETE");
 
   }
 
@@ -207,8 +207,8 @@ class HttpMethodsTest extends TestCase {
     //-- Using "PATCH" as a custom method
 
     $http_response = $this->request
-      ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
-      ->add("hobby", "programming")
+      ->data(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+      ->data("hobby", "programming")
       ->header("X-API-Key", "aabbccdd")
       ->header(array("foo" => "bar", "User-Agent" => "CERN-LineMode/2.15 libwww/2.17b3"))
       ->param("active", 1)
@@ -229,7 +229,7 @@ class HttpMethodsTest extends TestCase {
       $data['hobby'] == 'programming');
 
     $this->assertEquals(true, $data_vars_correct,
-      "Test of add() functioning properly for HTTP PATCH issued via send()");
+      "Test of data() functioning properly for HTTP PATCH issued via send()");
 
     $get = $response['get'];
     $get_vars_correct = ($get['active'] == 1 &&
@@ -243,14 +243,14 @@ class HttpMethodsTest extends TestCase {
       "Test of request_uri functioning properly for HTTP PATCH");
 
     $this->assertEquals("application/x-www-form-urlencoded", $response['server']['CONTENT_TYPE'],
-      "Test1 (content-type) of set() functioning properly for HTTP PATCH");
+      "Test1 (content-type) of header() functioning properly for HTTP PATCH");
 
     $this->assertEquals("CERN-LineMode/2.15 libwww/2.17b3", $response['server']['HTTP_USER_AGENT'],
-      "Test2 (custom headers, passed as array) of set() functioning properly for HTTP PATCH");
+      "Test2 (custom headers, passed as array) of header() functioning properly for HTTP PATCH");
 
     try {
       $this->request->header('Content-Type', 'application/json') // This is invalid
-        ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+        ->data(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
         ->send("/somepath");
     } catch (RestAgentException $ex) {
       $this->assertTrue(true);
@@ -266,8 +266,8 @@ class HttpMethodsTest extends TestCase {
 
     try {
       $this->request
-        ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
-        ->add("hobby", "programming")
+        ->data(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+        ->data("hobby", "programming")
         ->header("X-API-Key", "aabbccdd")
         ->param(array("param1" => "foo", "param2" => "bar"))
         ->method("HEAD")
@@ -283,8 +283,8 @@ class HttpMethodsTest extends TestCase {
   public function test_head() {
 
     $response = $this->request
-      ->add(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
-      ->add("hobby", "programming")
+      ->data(array("firstName" => "irakli", "lastName" => "Nadareishvili"))
+      ->data("hobby", "programming")
       ->header("X-API-Key", "aabbccdd")
       ->header(array("foo" => "bar", "User-Agent" => "CERN-LineMode/2.15 libwww/2.17b3"))
       ->head("/somepath");

@@ -31,8 +31,8 @@ Assemble and send an HTTP POST:
 
     $response = $request
                     ->header("X-API-Key", "aabbccdd")
-                    ->add(array("firstName" => "Irakli", "lastName" => "Nadareishvili"))
-                    ->add("hobby", "programming")
+                    ->data(array("firstName" => "Irakli", "lastName" => "Nadareishvili"))
+                    ->data("hobby", "programming")
                     ->header(array("User-Agent" => "RestAgent/1.0 php/libcurl", "foo" => "bar"))
                     ->param("active", 1)
                     ->post("http://example.com/user");
@@ -40,7 +40,7 @@ Assemble and send an HTTP POST:
 Using custom HTTP method and setting a custom timeout:
 
     $response = $request
-                    ->add(array("firstName" => "Irakli", "lastName" => "Nadareishvili"))
+                    ->data(array("firstName" => "Irakli", "lastName" => "Nadareishvili"))
                     ->header("X-API-Key", "aabbccdd")
                     ->header(array("User-Agent" => "CERN-LineMode/2.15 libwww/2.17b3"))
                     ->method("PATCH")
@@ -51,14 +51,14 @@ Using custom HTTP method and setting a custom timeout:
 Where:
 
 * set() sets an HTTP header
-* add() sets a variable (query parameter in case of HTTP GET, or data variable in case of POST or PUT).
-* param() allows setting query parameters for non-HTTP GET calls (i.e. when add() would set passed variables in request
-body rather than URL). **Caution**: Do not use param() with HTTP GET or you will get an exception. Use add() instead!
+* data() sets a variable (query parameter in case of HTTP GET, or HTTP body variable in case of POST or PUT etc.).
+* param() allows setting query parameters for non-HTTP GET calls (i.e. when data() would set passed variables in request
+body rather than URL). **Caution**: Do not use param() with HTTP GET or you will get an exception. Use data() instead!
 * head(), get(), post(), put() and delete() issue corresponding HTTP request.
 * method() sets a custom HTTP method to be used in conjuction with a send() call.
 * timeout() overrides the default timeout to a specified number of milliseconds.
 
-Please note that add(), param() and set() methods take either an array or a single name/value pair as an argument.
+Please note that data(), param() and set() methods take either an array or a single name/value pair as an argument.
 Why? Because either can be convenient, in different cases.
 
 Furthermore, methods like ->get() and ->post() are just convenience shortcuts on calling ->method("get")->send(...);
@@ -69,7 +69,7 @@ If you want to use any HTTP methods not included in the above list, try issuing 
 The purpose of the param() method can be confusing and may need further explanation. 
 
 In the puristic RESTful view, we want to have a uniform way of making HTTP calls and pass variables as we
-do it. Therefore it's important, as a general rule, to be able to set request data with a uniform add() method. After 
+do it. Therefore it's important, as a general rule, to be able to set request data with a uniform data() method. After 
 which  we can make appropriate HTTP-verb call (whether it's GET or PUT or whatever else), without having to worry 
 about the specifics of the verb's way of encoding data (in the URL or HTTP Body).
 
@@ -77,15 +77,15 @@ That said, sometimes we do need to add HTTP query params even during an HTTP cal
 body (e.g. POST or PUT). Whether we consider it RESTful or not, it's allowed in HTTP and can be a necessary
 "evil" sometimes. That is why param() exists: to allow for such use-cases.
 
-However, we do not allow using param() with HTTP GET, because add() method already does what param() would do and it would
+However, we do not allow using param() with HTTP GET, because data() method already does what param() would do and it would
 be confusing to get in the business of deciding which method gets priority or how variables are merged if somebody
-decides to set the same variable through both param() and add().
+decides to set the same variable through both param() and data().
 
 That is why an attempt to use param() during an HTTP GET call results in an exception, the exception basically
 indicates: "we gave you a way to shortcut the system during POST, PUT etc, now don't be asinine and don't try to
 use it for GET, where you really should not be using it".
 
-So that's the very long story of param() and its relation to add()...
+So that's the very long story of param() and its relation to data()...
 
 ### Response Format
 

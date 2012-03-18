@@ -220,7 +220,7 @@ class Request {
     $http_method = strtoupper($http_method);
 
     if ($http_method == 'GET' && !empty($this->params) && is_array($this->params)) {
-      throw new RestAgentException("You may not use param() when issuing an HTTP GET. Use add() instead!");
+      throw new RestAgentException("You may not use param() when issuing an HTTP GET. Use data() instead!");
     }
 
     if (!empty($data)) {
@@ -311,11 +311,11 @@ class Request {
   /**
    * Set a variable (query param or a data var)
    */
-  public function add() {
+  public function data() {
     if (func_num_args() == 1) {
       $args = func_get_arg(0);
       if (!is_array($args)) {
-        throw new RestAgentException("If you only pass one argument to add() it must be an array");
+        throw new RestAgentException("If you only pass one argument to data() it must be an array");
       }
 
       foreach ($args as $name => $value) {
@@ -328,14 +328,14 @@ class Request {
       $name = func_get_arg(0);
       $value = func_get_arg(1);
       if (!is_string($name) || !(is_string($value) || is_numeric($value) || is_bool($value))) {
-        throw new RestAgentException("If you only pass two arguments to add(), first one must be a string and the second
+        throw new RestAgentException("If you only pass two arguments to data(), first one must be a string and the second
                                       one must be: a string, a number, or a boolean");
       }
       $this->data[$name] = $value;
       return $this;
     }
 
-    throw new RestAgentException("add() method only accepts either one or two arguments");
+    throw new RestAgentException("data() method only accepts either one or two arguments");
   }
 
   /**
