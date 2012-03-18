@@ -50,15 +50,17 @@ Using custom HTTP method and setting a custom timeout:
 
 Where:
 
-* set() sets an HTTP header
-* data() sets a variable (query parameter in case of HTTP GET, or HTTP body variable in case of POST or PUT etc.).
+* header() sets an HTTP header
+* data() sets data variable(s) to be passed during the request. It can be a query parameter in case of an HTTP GET, or
+variables passed as part of HTTP body in case of HTTP POST, PUT etc.
 * param() allows setting query parameters for non-HTTP GET calls (i.e. when data() would set passed variables in request
-body rather than URL). **Caution**: Do not use param() with HTTP GET or you will get an exception. Use data() instead!
-* head(), get(), post(), put() and delete() issue corresponding HTTP request.
-* method() sets a custom HTTP method to be used in conjuction with a send() call.
+body rather than the URL). **Caution**: Do not use param() with HTTP GET or you will get an exception. Use data() instead!
+More about this below.
+* head(), get(), post(), put() and delete() calls issue a corresponding HTTP request.
+* method() sets a custom HTTP method to be used in conjunction with a send() call.
 * timeout() overrides the default timeout to a specified number of milliseconds.
 
-Please note that data(), param() and set() methods take either an array or a single name/value pair as an argument.
+Please note that data(), param() and header() methods take either an array or a single name/value pair as an argument.
 Why? Because either can be convenient, in different cases.
 
 Furthermore, methods like ->get() and ->post() are just convenience shortcuts on calling ->method("get")->send(...);
@@ -70,7 +72,7 @@ The purpose of the param() method can be confusing and may need further explanat
 
 In the puristic RESTful view, we want to have a uniform way of making HTTP calls and pass variables as we
 do it. Therefore it's important, as a general rule, to be able to set request data with a uniform data() method. After 
-which  we can make appropriate HTTP-verb call (whether it's GET or PUT or whatever else), without having to worry 
+which  we can make appropriate HTTP-verb call (whether it's a GET or a PUT or whatever else), without having to worry
 about the specifics of the verb's way of encoding data (in the URL or HTTP Body).
 
 That said, sometimes we do need to add HTTP query params even during an HTTP call that encodes variables in an HTTP
