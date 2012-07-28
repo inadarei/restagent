@@ -21,6 +21,13 @@ Issue a simple HTTP GET:
     
     $response = $request->get("http://example.com/user/1");
 
+Setting base URL for requests:
+
+    require_once('/path/to/restagent/restagent.lib.php');
+    $request = new \restagent\Request('http://restagent.vm:8080/api/');
+    
+    $response = $request->get("/user/1");
+
 Little more drama, please:
 
     $response = $request->header('Content-Type', 'application/json')
