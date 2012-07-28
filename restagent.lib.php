@@ -275,6 +275,16 @@ class Request {
   private function get_full_url($uri) {
     // We do not want "/", "?", "&" and "=" separators to be encoded!!!
     //$uri = str_replace(array('%2F', '%3F', '%3D', '%26'), array('/', '?', '=', '&'), urlencode($uri));
+    
+    if (substr($uri,0,4) === 'http') {
+      return $uri;
+    }
+    
+    // People are forgetful, we are here to help, not: punish.
+    if ($uri[0] != '/') {
+      $uri = "/$uri";
+    }
+    
     return $this->base_url . $uri;
   }
 
