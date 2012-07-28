@@ -1,4 +1,4 @@
-# Make sure you have the latest PEAR PHPUnit installed:
+# 1. Make sure you have the latest PEAR PHPUnit installed:
 
 Run following commands from a shell:
 
@@ -10,30 +10,6 @@ sudo pear update-channels
 sudo pear upgrade-all
 sudo pear install --alldeps phpunit/PHPUnit
 ```
-
-# 1. Set up a proper virtualhost for testing
-
-In Apache, NginX, etc. (choose your poison) set up a virtualhost so that it points to
-test http controller under: tests/server.php and can  process requests to
-http://restagent.vm:8080/ (or  modify the value of the base url in the phpunit.xml file)
-
-For instance, for Nginx:
-<pre>
-... snippet ...
-server {
-    listen   8080;
-    server_name  restagent.vm;
-    root /path/to/restagent/code/tests;
-
-    index  index.php server.php;
-
-location / {
-      if (!-e $request_filename) {
-        rewrite ^/(.*)$ /server.php?q=$1 last;
-      }
-}
-...
-</pre>
 
 ## 2. Set up a testing URL
 
