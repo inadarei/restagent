@@ -11,7 +11,7 @@ sudo pear upgrade-all
 sudo pear install --alldeps phpunit/PHPUnit
 ```
 
-# Set up a proper virtualhost for testing
+# 1. Set up a proper virtualhost for testing
 
 In Apache, NginX, etc. (choose your poison) set up a virtualhost so that it points to
 test http controller under: tests/server.php and can  process requests to
