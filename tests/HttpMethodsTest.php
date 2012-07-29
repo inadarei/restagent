@@ -27,6 +27,7 @@ class HttpMethodsTest extends TestCase {
       ->get("/somepath");
 
     $response = array();
+    
     eval('$response = ' . $http_response['data'] . ";");
 
     $this->assertEquals("GET", $response['server']['REQUEST_METHOD'],

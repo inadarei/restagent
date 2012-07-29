@@ -13,7 +13,7 @@ namespace restagent;
  */
 class Request {
 
-  const DEFAULT_TIMEOUT = 2000;
+  const DEFAULT_TIMEOUT = 1000;
 
   private $base_url = '';
   private $data = array();
@@ -33,11 +33,10 @@ class Request {
     $this->curl = curl_init();
     curl_setopt($this->curl, CURLOPT_USERAGENT, "RestAgent/1.0");
     curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($this->curl, CURLOPT_HEADER, 0);
+    curl_setopt($this->curl, CURLOPT_HEADER, 1);
     curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($this->curl, CURLOPT_TIMEOUT_MS, self::DEFAULT_TIMEOUT);
-    curl_setopt($this->curl, CURLOPT_FORBID_REUSE, false); // Connection-pool for CURL
-
+    curl_setopt($this->curl, CURLOPT_FORBID_REUSE, false); // Connection-pool for CURL    
   }
   /**
    * Class destructor cleans up any resources
@@ -216,6 +215,7 @@ class Request {
    *  an array containing json and decoded versions of the response.
    */
   private function http_request($http_method, $uri, $data = array()) {
+    $data = (empty($data)) ? '' : $data;
     $data = (!empty($data) && is_array($data)) ? http_build_query($data) : '';
     $http_method = strtoupper($http_method);
 
@@ -223,8 +223,8 @@ class Request {
       throw new RestAgentException("You may not use param() when issuing an HTTP GET. Use data() instead!");
     }
 
+    $this->header('Content-Length', strlen($data));
     if (!empty($data)) {
-      $this->header('Content-Length', strlen($data));
       curl_setopt($this->curl, CURLOPT_POSTFIELDS, $data);
     }
 
@@ -247,24 +247,40 @@ class Request {
       }
     }
 
-
-
     curl_setopt($this->curl, CURLOPT_URL, $full_url);
     curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, $http_method);
 
     $response = curl_exec($this->curl);
-
+    
     //reset defaults to allow clean re-use of the request object
     $this->data = array();
     $this->headers = array();
     $this->method = '';
 
     //$this->check_status($response, $full_url);
+    
+    $header_size = curl_getinfo($this->curl, CURLINFO_HEADER_SIZE);
+    $headers = substr($response, 0, $header_size);
+    $content = substr($response, $header_size);
 
+    if (function_exists('http_parse_headers')) {
+      $headers = http_parse_headers($headers);
+    } else {
+      $headers = $this->_http_parse_headers($headers);
+    }
+
+    $ret = array(
+      'code' => curl_getinfo($this->curl, CURLINFO_HTTP_CODE),
+      'meta' => curl_getinfo($this->curl),
+      'headers'  => $headers,
+      'data' => $content
+    );
+    
     return array(
       'code' => curl_getinfo($this->curl, CURLINFO_HTTP_CODE),
       'meta' => curl_getinfo($this->curl),
-      'data' => $response
+      'headers'  => $headers,
+      'data' => $content
     );
 
   }
