@@ -1,5 +1,4 @@
 <?php
-
 namespace restagent;
 
 /**
@@ -36,7 +35,7 @@ class Request {
     curl_setopt($this->curl, CURLOPT_HEADER, 1);
     curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($this->curl, CURLOPT_TIMEOUT_MS, self::DEFAULT_TIMEOUT);
-    curl_setopt($this->curl, CURLOPT_FORBID_REUSE, false); // Connection-pool for CURL    
+    curl_setopt($this->curl, CURLOPT_FORBID_REUSE, false); // Connection-pool for CURL
   }
   /**
    * Class destructor cleans up any resources
@@ -251,14 +250,14 @@ class Request {
     curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, $http_method);
 
     $response = curl_exec($this->curl);
-    
+
     //reset defaults to allow clean re-use of the request object
     $this->data = array();
     $this->headers = array();
     $this->method = '';
 
     //$this->check_status($response, $full_url);
-    
+
     $header_size = curl_getinfo($this->curl, CURLINFO_HEADER_SIZE);
     $headers = substr($response, 0, $header_size);
     $content = substr($response, $header_size);
@@ -269,13 +268,6 @@ class Request {
       $headers = $this->_http_parse_headers($headers);
     }
 
-    $ret = array(
-      'code' => curl_getinfo($this->curl, CURLINFO_HTTP_CODE),
-      'meta' => curl_getinfo($this->curl),
-      'headers'  => $headers,
-      'data' => $content
-    );
-    
     return array(
       'code' => curl_getinfo($this->curl, CURLINFO_HTTP_CODE),
       'meta' => curl_getinfo($this->curl),
@@ -291,16 +283,16 @@ class Request {
   private function get_full_url($uri) {
     // We do not want "/", "?", "&" and "=" separators to be encoded!!!
     //$uri = str_replace(array('%2F', '%3F', '%3D', '%26'), array('/', '?', '=', '&'), urlencode($uri));
-    
+
     if (substr($uri,0,4) === 'http') {
       return $uri;
     }
-    
+
     // People are forgetful, we are here to help, not: punish.
     if ($uri[0] != '/') {
       $uri = "/$uri";
     }
-    
+
     return $this->base_url . $uri;
   }
 
@@ -450,6 +442,3 @@ class Request {
 }
 
 class RestAgentException extends \Exception {}
-
-
-
