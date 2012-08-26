@@ -1,0 +1,23 @@
+{
+    "name": "inadarei/restagent",
+    "description": "Powerful, intuitive and easy to use HTTP REST client for PHP.",
+    "authors": [
+        {
+            "name": "inadarei",
+            "email": "inadarei@example.com"
+        }
+    ],
+    "keywords": ["http", "rest", "curl", "client"],
+    "homepage": "https://github.com/inadarei/restagent",
+    "license": "MIT",
+    "require": {
+        "php": ">=5.3.0",
+        "ext-curl": "*"
+    }
+    "autoload": {
+        "psr-0": {
+            "Restagent\\Tests": "tests/",
+            "Restagent": "src/"
+        }
+    }
+}
