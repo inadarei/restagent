@@ -1,5 +1,0 @@
-<phpunit>
-  <php>
-    <env name="server_url" value="http://restagent.vm:8080"/>
-  </php>
-</phpunit>
