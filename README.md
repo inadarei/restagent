@@ -44,6 +44,15 @@ Assemble and send an HTTP POST:
                     ->param("active", 1)
                     ->post("http://example.com/user");
 
+An HTTP PUT with raw data in the HTTP BODY:
+
+    $json = '{"name" : "irakli", "lastname" : "nadareishvili"}';
+    $response = $request
+                    ->header("X-API-Key", "aabbccdd")
+                    ->body($json)
+                    ->header(array("User-Agent" => "RestAgent/1.0 php/libcurl", "foo" => "bar"))
+                    ->put("http://example.com/user");
+
 Using custom HTTP method and setting a custom timeout:
 
     $response = $request
