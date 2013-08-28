@@ -16,6 +16,7 @@ class Request {
 
   private $base_url = '';
   private $data = array();
+    private $rawBodyAlreadySet = false;
   private $params = array();
   private $headers = array();
   private $method = '';
@@ -101,10 +102,7 @@ class Request {
 
     $response = curl_exec($this->curl);
 
-    //reset defaults to allow clean re-use of the request object
-    $this->data = array();
-    $this->headers = array();
-    $this->method = '';
+    $this->reset();
 
     // Restore default values
     curl_setopt($this->curl, CURLOPT_NOBODY, false);
@@ -124,6 +122,14 @@ class Request {
     );
   }
 
+  private function reset() {
+    //reset defaults to allow clean re-use of the request object
+    $this->data = array();
+      $this->rawBodyAlreadySet = false;
+    $this->headers = array();
+    $this->method = '';
+  }
+  
   /**
    * Backup PHP impl. for when PECL http_parse_headers() function is not available
    *
@@ -251,11 +257,8 @@ class Request {
 
     $response = curl_exec($this->curl);
 
-    //reset defaults to allow clean re-use of the request object
-    $this->data = array();
-    $this->headers = array();
-    $this->method = '';
-
+    $this->reset();
+    
     //$this->check_status($response, $full_url);
 
     $header_size = curl_getinfo($this->curl, CURLINFO_HEADER_SIZE);
@@ -327,10 +330,23 @@ class Request {
   }
 
   /**
+  * Set HTTP body as a free-form value
+  */
+  public function body() {
+    $this->rawBodyAlreadySet = true;
+    $this->data = $args;
+    return $this;      
+  }
+  
+  /**
    * Set a variable (query param or a data var)
    */
   public function data() {
     if (func_num_args() == 1) {
+      if ($this->rawBodyAlreadySet) {
+        throw new RestAgentException("Raw HTTP Body was previously set. Cannot alter it with key/value form data");
+      }
+      
       $args = func_get_arg(0);
       if (!is_array($args)) {
         throw new RestAgentException("If you only pass one argument to data() it must be an array");
