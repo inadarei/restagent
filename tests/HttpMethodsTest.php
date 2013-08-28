@@ -136,6 +136,36 @@ class HttpMethodsTest extends TestCase {
     $this->fail('Setting a bogus Content-Type should not have passed.');
 
   }
+  
+  public function test_post_raw_body() {
+
+    $json = '{"name" : "irakli", "lastname" : "nadareishvili"}';
+        
+    $http_response = $this->request
+      ->body($json)
+      ->header("X-API-Key", "aabbccdd")
+      ->header(array("foo" => "bar", "one" => "two"))
+      ->post("/somepath");
+
+    $response = array();
+    eval('$response = ' . $http_response['data'] . ";");
+
+    $this->assertEquals($response['_RAW_HTTP_DATA'], $json,
+        "Test of correct method transmitted for HTTP POST");  
+        
+    try {
+      $this->request
+        ->body($json)
+        ->data(array("firstName" => "irakli", "lastName" => "Nadareishvili")) // this is invalid after ->body()
+        ->post("/somepath");
+    } catch (RestAgentException $ex) {
+      $this->assertTrue(true);
+      return;
+    }
+    
+    $this->fail('You should not be able to call data() after setting body with body().');  
+        
+  }
 
 
   public function test_put() {

@@ -11,7 +11,7 @@ $out['get'] = $_GET;
 $out['post'] = $_POST;
 
 $method = $_SERVER['REQUEST_METHOD'];
-if ($method != "GET" && $method != "POST") {
+if ($method != "GET") {
   $contents = file_get_contents("php://input");
   $parsed_contents = null;
   parse_str($contents, $parsed_contents);
