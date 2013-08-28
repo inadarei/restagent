@@ -332,9 +332,9 @@ class Request {
   /**
   * Set HTTP body as a free-form value
   */
-  public function body() {
+  public function body($rawdata) {
     $this->rawBodyAlreadySet = true;
-    $this->data = $args;
+    $this->data = $rawdata;
     return $this;      
   }
   
