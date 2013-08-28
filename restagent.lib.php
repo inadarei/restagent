@@ -181,6 +181,7 @@ class Request {
       throw new RestAgentException("You should not set content-type for HTTP POST that is not either
                                    'application/x-www-form-urlencoded' or 'multipart/form-data'");
     }
+    
     return $this->http_request('POST', $uri, $this->data);
   }
 
@@ -219,9 +220,17 @@ class Request {
    * @return
    *  an array containing json and decoded versions of the response.
    */
-  private function http_request($http_method, $uri, $data = array()) {
-    $data = (empty($data)) ? '' : $data;
-    $data = (!empty($data) && is_array($data)) ? http_build_query($data) : '';
+  private function http_request($http_method, $uri, $_data = array()) {
+    if (empty($_data)) {
+      $data = '';
+    } else {
+      if (is_array($_data)) {
+        $data = http_build_query($_data); 
+      } else {
+        $data = $_data;
+      }
+    }
+    
     $http_method = strtoupper($http_method);
 
     if ($http_method == 'GET' && !empty($this->params) && is_array($this->params)) {
