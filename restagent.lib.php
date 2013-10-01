@@ -12,7 +12,7 @@ namespace restagent;
  */
 class Request {
 
-  const DEFAULT_TIMEOUT = 1000;
+  const DEFAULT_TIMEOUT = 5000;
 
   private $base_url = '';
   private $data = array();
