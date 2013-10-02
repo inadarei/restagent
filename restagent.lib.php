@@ -12,7 +12,7 @@ namespace restagent;
  */
 class Request {
 
-  const DEFAULT_TIMEOUT = 5000;
+  const DEFAULT_TIMEOUT = 5500;
 
   private $base_url = '';
   private $data = array();
@@ -101,6 +101,12 @@ class Request {
     }
 
     $response = curl_exec($this->curl);
+
+    // Check if any error occurred
+    if(curl_errno($this->curl))
+    {
+      throw new RestAgentException(curl_error($this->curl));
+    }
 
     $this->reset();
 
@@ -265,6 +271,12 @@ class Request {
     curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, $http_method);
 
     $response = curl_exec($this->curl);
+
+    // Check if any error occurred
+    if(curl_errno($this->curl))
+    {
+      throw new RestAgentException(curl_error($this->curl));
+    }
 
     $this->reset();
     
