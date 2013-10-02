@@ -28,6 +28,7 @@ class Request {
    * @param null $base_url
    */
   public function __construct($base_url = '') {
+
     $this->base_url = (!empty($base_url)) ? rtrim($base_url, "/") : '';
 
     $this->curl = curl_init();
@@ -37,6 +38,7 @@ class Request {
     curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($this->curl, CURLOPT_TIMEOUT_MS, self::DEFAULT_TIMEOUT);
     curl_setopt($this->curl, CURLOPT_FORBID_REUSE, false); // Connection-pool for CURL
+    curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, true);
   }
   /**
    * Class destructor cleans up any resources
