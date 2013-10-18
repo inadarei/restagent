@@ -38,6 +38,7 @@ class Request {
     curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($this->curl, CURLOPT_TIMEOUT_MS, self::DEFAULT_TIMEOUT);
     curl_setopt($this->curl, CURLOPT_FORBID_REUSE, false); // Connection-pool for CURL
+    curl_setopt($this->curl, CURLOPT_ENCODING , "gzip");
     curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, true);
     $pemPath = __DIR__ . '/cacert.pem';
     curl_setopt($this->curl, CURLOPT_CAINFO, $pemPath);
