@@ -37,9 +37,15 @@ class Request {
     curl_setopt($this->curl, CURLOPT_HEADER, 1);
     curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($this->curl, CURLOPT_TIMEOUT_MS, self::DEFAULT_TIMEOUT);
+    if (defined('CURLOPT_TIMEOUT_MS')) {
+      curl_setopt($this->curl, CURLOPT_TIMEOUT_MS, self::DEFAULT_TIMEOUT);
+    }
     curl_setopt($this->curl, CURLOPT_FORBID_REUSE, false); // Connection-pool for CURL
     curl_setopt($this->curl, CURLOPT_ENCODING , "gzip");
     curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, true);
+    if (getenv('REST_AGENT_DEBUG')) {
+      curl_setopt($this->curl, CURLOPT_VERBOSE, true);
+    }
     $pemPath = __DIR__ . '/cacert.pem';
     curl_setopt($this->curl, CURLOPT_CAINFO, $pemPath);
   }
