@@ -115,6 +115,16 @@ The head(), get(), post(), put(), delete() and send() calls return an associativ
 * data: response content for any http method except HTTP HEAD. The latter, by definition, does not return any content
 so 'data' contains parsed http response headers, instead.
 
+### CURL Debugging
+
+By setting `REST_AGENT_DEBUG` (to any value actually):
+
+```
+export REST_AGENT_DEBUG=true
+```
+
+You can enable CURL debugging.
+
 
 ## License
 
