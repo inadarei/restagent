@@ -36,7 +36,6 @@ class Request {
     curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($this->curl, CURLOPT_HEADER, 1);
     curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, 1);
-    curl_setopt($this->curl, CURLOPT_TIMEOUT_MS, self::DEFAULT_TIMEOUT);
     if (defined('CURLOPT_TIMEOUT_MS')) {
       curl_setopt($this->curl, CURLOPT_TIMEOUT_MS, self::DEFAULT_TIMEOUT);
     }
