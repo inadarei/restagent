@@ -3,3 +3,5 @@
 nbproject
 .settings
 logs
+vendor/
+composer.lock
