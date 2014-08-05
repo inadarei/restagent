@@ -14,13 +14,13 @@ class Request {
 
   const DEFAULT_TIMEOUT = 5500;
 
-  private $base_url = '';
-  private $data = array();
-  private $rawBodyAlreadySet = false;
-  private $params = array();
-  private $headers = array();
-  private $method = '';
-  private $curl;
+  protected $base_url = '';
+  protected $data = array();
+  protected $rawBodyAlreadySet = false;
+  protected $params = array();
+  protected $headers = array();
+  protected $method = '';
+  protected $curl;
 
   /**
    * Public constructor
@@ -138,7 +138,7 @@ class Request {
     );
   }
 
-  private function reset() {
+  protected function reset() {
     //reset defaults to allow clean re-use of the request object
     $this->data = array();
       $this->rawBodyAlreadySet = false;
@@ -153,7 +153,7 @@ class Request {
    * @return array
    * @source http://www.php.net/manual/en/function.http-parse-headers.php#77241
    */
-  private function _http_parse_headers( $header ) {
+  protected function _http_parse_headers( $header ) {
     $retVal = array();
     $fields = explode("\r\n", preg_replace('/\x0D\x0A[\x09\x20]+/', ' ', $header));
     foreach( $fields as $field ) {
@@ -236,7 +236,7 @@ class Request {
    * @return
    *  an array containing json and decoded versions of the response.
    */
-  private function http_request($http_method, $uri, $_data = array()) {
+  protected function http_request($http_method, $uri, $_data = array()) {
     if (empty($_data)) {
       $data = '';
     } else {
@@ -314,7 +314,7 @@ class Request {
   /**
    * Get full URL from a partial one
    */
-  private function get_full_url($uri) {
+  protected function get_full_url($uri) {
     // We do not want "/", "?", "&" and "=" separators to be encoded!!!
     //$uri = str_replace(array('%2F', '%3F', '%3D', '%26'), array('/', '?', '=', '&'), urlencode($uri));
 
@@ -439,7 +439,7 @@ class Request {
    *
    * @throws RestAgentException
    */
-  private function check_status($response, $full_url) {
+  protected function check_status($response, $full_url) {
     $resp_code = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
 
     if ($resp_code < 199 || $resp_code > 399 || !empty($response['decoded']->error)) {
