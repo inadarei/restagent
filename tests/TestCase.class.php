@@ -1,6 +1,6 @@
 <?php
 
-namespace restagent;
+namespace Restagent;
 
 /**
  * Abstract parent for RestAgent test classes.
