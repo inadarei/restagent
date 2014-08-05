@@ -1,0 +1,16 @@
+{
+    "name": "inadarei/restagent",
+    "description": "RestAgent is an HTTP/HTTPS client library for PHP.",
+    "license": "MIT",
+    "repositories": [],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "require-dev": {},
+    "include-path": [],
+    "autoload": {
+        "psr-4": {
+            "Restagent\\": "lib/"
+        }
+    }
+}
