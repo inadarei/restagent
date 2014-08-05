@@ -1,5 +1,5 @@
 <?php
-namespace restagent;
+namespace Restagent;
 
 /**
  *
