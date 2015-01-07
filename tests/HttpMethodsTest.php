@@ -41,7 +41,7 @@ class HttpMethodsTest extends TestCase {
     $this->assertEquals(true, $get_vars_correct,
       "Test of data() functioning properly for HTTP GET");
 
-    $this->assertEquals("application/json", $response['server']['CONTENT_TYPE'],
+    $this->assertEquals("application/json", $response['server']['HTTP_CONTENT_TYPE'],
       "Test1 (content-type) of header() functioning properly for HTTP GET");
 
     $this->assertEquals("bar", $response['server']['HTTP_FOO'],
@@ -102,7 +102,7 @@ class HttpMethodsTest extends TestCase {
       "Test of data() functioning properly for HTTP POST");
 
 
-    $this->assertEquals("application/x-www-form-urlencoded", $response['server']['CONTENT_TYPE'],
+    $this->assertEquals("application/x-www-form-urlencoded", $response['server']['HTTP_CONTENT_TYPE'],
       "Test1 (content-type) of header() functioning properly for HTTP POST");
 
     $this->assertEquals("bar",$response['server']['HTTP_FOO'],
@@ -191,7 +191,7 @@ class HttpMethodsTest extends TestCase {
     $this->assertEquals(true, $data_vars_correct,
       "Test of data() functioning properly for HTTP PUT");
 
-    $this->assertEquals("application/x-www-form-urlencoded", $response['server']['CONTENT_TYPE'],
+    $this->assertEquals("application/x-www-form-urlencoded", $response['server']['HTTP_CONTENT_TYPE'],
       "Test1 (content-type) of header() functioning properly for HTTP PUT");
 
     $this->assertEquals("bar", $response['server']['HTTP_FOO'],
@@ -225,7 +225,7 @@ class HttpMethodsTest extends TestCase {
     $this->assertEquals("/somepath", $response['server']['REQUEST_URI'],
       "Test of request_uri functioning properly for HTTP DELETE");
 
-    $this->assertEquals("application/x-www-form-urlencoded", $response['server']['CONTENT_TYPE'],
+    $this->assertEquals("application/x-www-form-urlencoded", $response['server']['HTTP_CONTENT_TYPE'],
       "Test1 (content-type) of header() functioning properly for HTTP DELETE");
 
     $this->assertEquals("CERN-LineMode/2.15 libwww/2.17b3", $response['server']['HTTP_USER_AGENT'],
@@ -273,7 +273,7 @@ class HttpMethodsTest extends TestCase {
     $this->assertEquals("/somepath?active=1&param1=foo&param2=bar", $response['server']['REQUEST_URI'],
       "Test of request_uri functioning properly for HTTP PATCH");
 
-    $this->assertEquals("application/x-www-form-urlencoded", $response['server']['CONTENT_TYPE'],
+    $this->assertEquals("application/x-www-form-urlencoded", $response['server']['HTTP_CONTENT_TYPE'],
       "Test1 (content-type) of header() functioning properly for HTTP PATCH");
 
     $this->assertEquals("CERN-LineMode/2.15 libwww/2.17b3", $response['server']['HTTP_USER_AGENT'],
