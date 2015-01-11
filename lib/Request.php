@@ -242,7 +242,7 @@ class Request {
       throw new RestAgentException("You may not use param() when issuing an HTTP GET. Use data() instead!");
     }
     
-    $data = $this->preprocessData($_data);
+    $this->preprocessData($_data);
     $this->setCurlHTTPRequestHeaders();
 
     $full_url = $this->get_full_url($uri);
