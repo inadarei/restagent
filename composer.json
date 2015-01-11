@@ -4,6 +4,12 @@
     "description": "RestAgent is an HTTP/HTTPS client library for PHP.",
     "homepage": "https://github.com/inadarei/restagent",
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Irakli Nadareishvili",
+            "homepage": "http://freshblurbs.com"
+        }
+    ],
     
     
     "require": {
@@ -21,6 +27,12 @@
     "autoload": {
         "psr-4": {
             "Restagent\\": "src/"
+        }
+    },
+    
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.x-dev"
         }
     }
 }
