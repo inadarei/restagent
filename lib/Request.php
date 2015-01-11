@@ -245,15 +245,8 @@ class Request {
     $this->preprocessData($_data);
     $this->setCurlHTTPRequestHeaders();
 
-    $full_url = $this->get_full_url($uri);
-
-    // Sometimes you want to use query params with non-HTTP GET methods
-    if ($http_method != 'GET') {
-      $params = (is_array($this->params)) ? http_build_query($this->params) : null;
-      if (!empty($params)) {
-        $full_url .= "?$params";
-      }
-    }
+    $add_more_url_params = ($http_method != "GET") ? true : false;
+    $full_url = $this->get_full_url($uri, $add_more_url_params);
 
     curl_setopt($this->curl, CURLOPT_URL, $full_url);
     curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, $http_method);
@@ -325,7 +318,7 @@ class Request {
   /**
    * Get full URL from a partial one
    */
-  protected function get_full_url($uri) {
+  protected function get_full_url($uri, $add_more_url_params = false) {
     // We do not want "/", "?", "&" and "=" separators to be encoded!!!
     //$uri = str_replace(array('%2F', '%3F', '%3D', '%26'), array('/', '?', '=', '&'), urlencode($uri));
 
@@ -338,7 +331,17 @@ class Request {
       $uri = "/$uri";
     }
 
-    return $this->base_url . $uri;
+    $full_url = $this->base_url . $uri;
+    
+    // Sometimes you want to use query params with non-HTTP GET methods
+    if ($add_more_url_params) {
+      $params = (is_array($this->params)) ? http_build_query($this->params) : null;
+      if (!empty($params)) {
+        $full_url .= "?$params";
+      }
+    }
+    
+    return $full_url;
   }
 
   /**
