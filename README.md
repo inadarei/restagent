@@ -39,7 +39,7 @@ Run: `composer install`
 After installing, you need to require Composer's autoloader in your project files, if you are not already doing it: 
 
 ```php
-require 'vendor/autoload.php';
+require_once './vendor/autoload.php';
 ```
 
 ## Quick Docs:
