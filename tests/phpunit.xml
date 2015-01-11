@@ -1,6 +1,6 @@
 <phpunit>
   <php>
-    <env name="server_url" value="http://restagent.vm:8080"/>
+    <env name="server_url" value="http://restagent.froyo.io/"/>
   </php>
  <logging>
      <log type="coverage-clover" target="../build/logs/clover.xml"/>

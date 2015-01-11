@@ -1,12 +1,25 @@
-# Installing Composer and PHPUnit
+# 1. Installing Composer and PHPUnit
 
 ```bash
 curl -sS https://getcomposer.org/installer | php
+
+## optionally:
 sudo mv composer.phar /usr/local/bin/composer
 composer -v
 ``` 
 
-## 2. Set up a testing URL
+## 2. Run the tests
+
+```bash
+$ cd /path/to/restagent
+$ composer test
+```
+
+## 3. Set up a local testing URL
+
+By default, tests are run against a cloud server (@see: test/phpunit.xml).
+
+When and if running local test setup is required, following steps can be followed:
 
 First, we'll set up a new custom domain so as not to conflict with any pre-existing servers.
 
@@ -57,11 +70,4 @@ server {
     gzip_disable     "MSIE [1-6]\."
     gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
 }
-```
-
-## 3. Run the tests
-
-```bash
-$ cd /path/to/restagent
-$ composer test
 ```
