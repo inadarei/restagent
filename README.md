@@ -36,21 +36,21 @@ Add `inadarei/restagent` to your `composer.json`.
 
 Run: `composer install`
 
+After installing, you need to require Composer's autoloader in your project files, if you are not already doing it: `require 'vendor/autoload.php';`
+
 ## Quick Docs:
 
 ### Issuing a Request
 
 Issue a simple HTTP GET:
 
-    require_once('/path/to/restagent/restagent.lib.php');
-    $request = new \restagent\Request;
+    $request = new \Restagent\Request;
     
     $response = $request->get("http://example.com/user/1");
 
 Setting base URL for requests:
 
-    require_once('/path/to/restagent/restagent.lib.php');
-    $request = new \restagent\Request('http://restagent.vm:8080/api/');
+    $request = new \Restagent\Request('http://restagent.vm:8080/api/');
     
     $response = $request->get("/user/1");
 
