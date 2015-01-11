@@ -23,9 +23,9 @@ PHP 5.3 or newer.
 #### 1. Install Composer
 
 ```bash
-curl -sS https://getcomposer.org/installer | php
-sudo mv composer.phar /usr/local/bin/composer
-composer -v
+$ curl -sS https://getcomposer.org/installer | php
+$ sudo mv composer.phar /usr/local/bin/composer
+$ composer -v
 ``` 
 or see detailed documentation: [https://getcomposer.org/doc/00-intro.md](https://getcomposer.org/doc/00-intro.md#installation-linux-unix-osx) 
 
