@@ -434,19 +434,19 @@ class Request {
     throw new RestAgentException("param() method only accepts either one or two arguments");
   }
 
-  /**
-   * Check http status for safe return codes
-   *
-   * @throws RestAgentException
-   */
-  protected function check_status($response, $full_url) {
-    $resp_code = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
-
-    if ($resp_code < 199 || $resp_code > 399 || !empty($response['decoded']->error)) {
-      $msg = "Server returned: \"HTTP 1.1. $resp_code\" \nURL: $full_url \nERROR: " . $response['json'];
+   /**
+    * Check http status for safe return codes
+    *
+    * @throws RestAgentException
+    */
+   public function check_status($resp_code, $url = "", $error = "") {
+    //$resp_code = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
+   
+    if ($resp_code < 199 || $resp_code > 399) {
+      $msg = "Server returned: \"HTTP 1.1. $resp_code\" \nURL: $url \nERROR: " . $error;
       throw new RestAgentException($msg);
     }
-  }
+   }
 
   /**
    * @param  $path
