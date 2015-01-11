@@ -5,6 +5,7 @@ curl -sS https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer
 composer -v
 ``` 
+
 ## 2. Set up a testing URL
 
 First, we'll set up a new custom domain so as not to conflict with any pre-existing servers.
