@@ -273,7 +273,8 @@ class Request {
         $data = $_data;
       }
     }
-    
+
+    //echo ("\ncontent length: " . print_r(data, true) . "  len " . strlen($data));
     $this->header('Content-Length', strlen($data));
     if (!empty($data)) {
       curl_setopt($this->curl, CURLOPT_POSTFIELDS, $data);
@@ -344,36 +345,6 @@ class Request {
   }
 
   /**
-   * Set an HTTP Head
-   */
-  public function header() {
-    if (func_num_args() == 1) {
-      $args = func_get_arg(0);
-      if (!is_array($args)) {
-        throw new RestAgentException("If you only pass one argument to set() it must be an array");
-      }
-
-      foreach ($args as $name => $value) {
-        $this->headers[$name] = $value;
-      }
-      return $this;
-    }
-
-    if (func_num_args() == 2) {
-      $name = func_get_arg(0);
-      $value = func_get_arg(1);
-      if (!is_string($name) || !(is_string($value) || is_numeric($value) || is_bool($value))) {
-        throw new RestAgentException("If you only pass two arguments to set(), first one must be a string and the second
-                                      one must be: a string, a number, or a boolean");
-      }
-      $this->headers[$name] = $value;
-      return $this;
-    }
-
-    throw new RestAgentException("set() method only accepts either one or two arguments");
-  }
-
-  /**
   * Set HTTP body as a free-form value
   */
   public function body($rawdata) {
@@ -383,74 +354,75 @@ class Request {
   }
 
   /**
-   * Set a variable (query param or a data var)
-   */
-  public function data() {
-    if (func_num_args() == 1) {
-      $args = func_get_arg(0);
-      $this->setDataArray($args);
-      return $this;
-    } elseif (func_num_args() == 2) {
-      $name = func_get_arg(0);
-      $value = func_get_arg(1);
-      $this->setDataDuplet($name, $value);
-      return $this;
-    }
-
-    throw new RestAgentException("data() method only accepts either one or two arguments");
-  }
-
-  protected function setDataArray($args) {
-    if ($this->rawBodyAlreadySet) {
-      throw new RestAgentException("Raw HTTP Body was previously set. Cannot alter it with key/value form data");
-    }
-
-    if (!is_array($args)) {
-      throw new RestAgentException("If you only pass one argument to data() it must be an array");
-    }
-
-    foreach ($args as $name => $value) {
-      $this->data[$name] = $value;
-    }
-  }
-
-  protected function setDataDuplet($name, $value) {
-    if (!is_string($name) || !(is_string($value) || is_numeric($value) || is_bool($value))) {
-      throw new RestAgentException("If you only pass two arguments to data(), first one must be a string and the second
-                                      one must be: a string, a number, or a boolean");
-    }
-    $this->data[$name] = $value;
-  }
-
-  /**
    * Set a query param. This method can/should not be used with HTTP GET! Use var() call instead or you
    * will get an exception
    */
   public function param() {
     if (func_num_args() == 1) {
-      $args = func_get_arg(0);
-      if (!is_array($args)) {
-        throw new RestAgentException("If you only pass one argument to param() it must be an array");
-      }
-
-      foreach ($args as $name => $value) {
-        $this->params[$name] = $value;
-      }
-      return $this;
+      $this->setDataArray(func_get_arg(0), 'param');
+    } else {
+      $this->setDataDuplet(func_get_arg(0), func_get_arg(1), 'param');
     }
 
-    if (func_num_args() == 2) {
-      $name = func_get_arg(0);
-      $value = func_get_arg(1);
-      if (!is_string($name) || !(is_string($value) || is_numeric($value) || is_bool($value))) {
-        throw new RestAgentException("If you only pass two arguments to param(), first one must be a string and the second
+    return $this;
+  }
+
+  /**
+   * Set an HTTP Head
+   */
+  public function header() {
+    if (func_num_args() == 1) {
+      $this->setDataArray(func_get_arg(0), 'header');
+    } else {
+      $this->setDataDuplet(func_get_arg(0), func_get_arg(1), 'header');
+    }
+
+    return $this;
+  }
+
+  /**
+   * Set a variable (query param or a data var)
+   */
+  public function data() {
+    if (func_num_args() == 1) {
+      $this->setDataArray(func_get_arg(0), 'data');
+    } else {
+      $this->setDataDuplet(func_get_arg(0), func_get_arg(1), 'data');
+    }
+
+    return $this;
+  }
+
+  protected function setDataArray($args, $mode) {
+    if ($mode == 'data' && $this->rawBodyAlreadySet) {
+      throw new RestAgentException("Raw HTTP Body was previously set. Cannot alter it with key/value form data");
+    }
+
+    if (!is_array($args)) {
+      throw new RestAgentException("If you only pass one argument to $mode() it must be an array");
+    }
+
+    $propName = $this->propName($mode);
+    foreach ($args as $name => $value) {
+      $this->{$propName}[$name] = $value;
+    }
+  }
+
+  protected function setDataDuplet($name, $value, $mode) {
+    if (!is_string($name) || !(is_string($value) || is_numeric($value) || is_bool($value))) {
+      throw new RestAgentException("If you only pass two arguments to $mode(), first one must be a string and the second
                                       one must be: a string, a number, or a boolean");
-      }
-      $this->params[$name] = $value;
-      return $this;
     }
 
-    throw new RestAgentException("param() method only accepts either one or two arguments");
+    $propName = $this->propName($mode);
+    $this->{$propName}[$name] = $value;
+  }
+
+  protected function propName($mode) {
+    $propName = $mode;
+    $propName = ($propName == 'param') ? 'params' : $propName;
+    $propName = ($propName == 'header') ? 'headers' : $propName;
+    return $propName;
   }
 
    /**
