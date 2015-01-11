@@ -1,3 +1,8 @@
+## RestAgent for PHP
+
+[![Build Status](https://scrutinizer-ci.com/g/inadarei/restagent/badges/build.png?b=master)](https://scrutinizer-ci.com/g/inadarei/restagent/build-status/master)
+
+
 RestAgent is an HTTP/HTTPS client library for PHP. Project's primary goals are, to: 
 
 * Provide elegant and intuitive API. 
