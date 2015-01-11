@@ -387,33 +387,39 @@ class Request {
    */
   public function data() {
     if (func_num_args() == 1) {
-      if ($this->rawBodyAlreadySet) {
-        throw new RestAgentException("Raw HTTP Body was previously set. Cannot alter it with key/value form data");
-      }
-
       $args = func_get_arg(0);
-      if (!is_array($args)) {
-        throw new RestAgentException("If you only pass one argument to data() it must be an array");
-      }
-
-      foreach ($args as $name => $value) {
-        $this->data[$name] = $value;
-      }
+      $this->setDataArray($args);
       return $this;
-    }
-
-    if (func_num_args() == 2) {
+    } elseif (func_num_args() == 2) {
       $name = func_get_arg(0);
       $value = func_get_arg(1);
-      if (!is_string($name) || !(is_string($value) || is_numeric($value) || is_bool($value))) {
-        throw new RestAgentException("If you only pass two arguments to data(), first one must be a string and the second
-                                      one must be: a string, a number, or a boolean");
-      }
-      $this->data[$name] = $value;
+      $this->setDataDuplet($name, $value);
       return $this;
     }
 
     throw new RestAgentException("data() method only accepts either one or two arguments");
+  }
+
+  protected function setDataArray($args) {
+    if ($this->rawBodyAlreadySet) {
+      throw new RestAgentException("Raw HTTP Body was previously set. Cannot alter it with key/value form data");
+    }
+
+    if (!is_array($args)) {
+      throw new RestAgentException("If you only pass one argument to data() it must be an array");
+    }
+
+    foreach ($args as $name => $value) {
+      $this->data[$name] = $value;
+    }
+  }
+
+  protected function setDataDuplet($name, $value) {
+    if (!is_string($name) || !(is_string($value) || is_numeric($value) || is_bool($value))) {
+      throw new RestAgentException("If you only pass two arguments to data(), first one must be a string and the second
+                                      one must be: a string, a number, or a boolean");
+    }
+    $this->data[$name] = $value;
   }
 
   /**
