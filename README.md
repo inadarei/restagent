@@ -13,7 +13,7 @@ PHP 5.3 or newer.
 
 ## Installation
 
-#### 1. Install composer
+#### 1. Install Composer
 
 ```bash
 curl -sS https://getcomposer.org/installer | php
