@@ -237,35 +237,13 @@ class Request {
    *  an array containing json and decoded versions of the response.
    */
   protected function http_request($http_method, $uri, $_data = array()) {
-    if (empty($_data)) {
-      $data = '';
-    } else {
-      if (is_array($_data)) {
-        $data = http_build_query($_data);
-      } else {
-        $data = $_data;
-      }
-    }
-
     $http_method = strtoupper($http_method);
-
     if ($http_method == 'GET' && !empty($this->params) && is_array($this->params)) {
       throw new RestAgentException("You may not use param() when issuing an HTTP GET. Use data() instead!");
     }
-
-    $this->header('Content-Length', strlen($data));
-    if (!empty($data)) {
-      curl_setopt($this->curl, CURLOPT_POSTFIELDS, $data);
-    }
-
-    // $this->headers is an associative array, to allow for overrides in set(), but
-    // curl_setopt() takes indexed array, so we need to convert.
-    $idxed_headers = array();
-    foreach ($this->headers as $name => $value) {
-      $idxed_headers[] = "$name: $value";
-    }
-
-    curl_setopt($this->curl, CURLOPT_HTTPHEADER, $idxed_headers);
+    
+    $data = $this->preprocessData($_data);
+    $this->setCurlHTTPRequestHeaders();
 
     $full_url = $this->get_full_url($uri);
 
@@ -283,34 +261,67 @@ class Request {
     $response = curl_exec($this->curl);
 
     // Check if any error occurred
-    if(curl_errno($this->curl))
-    {
-      throw new RestAgentException(curl_error($this->curl));
-    }
+    if(curl_errno($this->curl)) { throw new RestAgentException(curl_error($this->curl)); }
 
     $this->reset();
 
     //$this->check_status($response, $full_url);
+    
+    return $this->postProcessResponse($response);
 
+  }
+
+  protected function preprocessData($_data) {
+    if (empty($_data)) {
+      $data = '';
+    } else {
+      if (is_array($_data)) {
+        $data = http_build_query($_data);
+      } else {
+        $data = $_data;
+      }
+    }
+    
+    $this->header('Content-Length', strlen($data));
+    if (!empty($data)) {
+      curl_setopt($this->curl, CURLOPT_POSTFIELDS, $data);
+    }
+    
+    return $data;
+  }
+  
+  /**
+   * $this->headers is an associative array, to allow for overrides in set(), but
+   * curl_setopt() takes indexed array, so we need to convert.
+   */
+  protected function setCurlHTTPRequestHeaders() {
+    $idxed_headers = array();
+    foreach ($this->headers as $name => $value) {
+      $idxed_headers[] = "$name: $value";
+    }
+    
+    curl_setopt($this->curl, CURLOPT_HTTPHEADER, $idxed_headers);
+  }
+  
+  protected function postProcessResponse($response) {
     $header_size = curl_getinfo($this->curl, CURLINFO_HEADER_SIZE);
     $headers = substr($response, 0, $header_size);
     $content = substr($response, $header_size);
-
+    
     if (function_exists('http_parse_headers')) {
       $headers = http_parse_headers($headers);
     } else {
       $headers = $this->_http_parse_headers($headers);
     }
-
+    
     return array(
       'code' => curl_getinfo($this->curl, CURLINFO_HTTP_CODE),
       'meta' => curl_getinfo($this->curl),
       'headers'  => $headers,
       'data' => $content
     );
-
   }
-
+  
   /**
    * Get full URL from a partial one
    */
