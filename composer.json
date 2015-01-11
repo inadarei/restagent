@@ -15,7 +15,7 @@
         "satooshi/php-coveralls": "dev-master"
     },
     "scripts" : {
-      "test" : "cd tests && php ../vendor/phpunit/phpunit/phpunit .",
+      "test" : "vendor/bin/phpunit -c 'tests/phpunit.xml' tests",
       "coveralls" : "composer test && php vendor/bin/coveralls"
     },
 
