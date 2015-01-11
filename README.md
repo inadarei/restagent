@@ -2,6 +2,7 @@
 
 [![Build Status](https://scrutinizer-ci.com/g/inadarei/restagent/badges/build.png?b=master&style=flat)](https://scrutinizer-ci.com/g/inadarei/restagent/build-status/master)
 [![Codacy Badge](https://www.codacy.com/project/badge/63fdccd4718047b59d51c4b585559ad9)](https://www.codacy.com/public/irakli/restagent)
+[![codecov.io](https://codecov.io/github/iraklici/restagent/coverage.svg?branch=master)](https://codecov.io/github/iraklici/restagent?branch=master)
 
 
 RestAgent is an HTTP/HTTPS client library for PHP. Project's primary goals are, to: 
