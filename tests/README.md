@@ -1,21 +1,15 @@
-# 1. Make sure you have the latest PEAR PHPUnit installed:
+# Installing Composer and PHPUnit
 
-Run following commands from a shell:
-
-```
-sudo pear channel-discover pear.phpunit.de
-sudo pear channel-discover pear.symfony-project.com
-sudo pear channel-discover components.ez.no
-sudo pear update-channels
-sudo pear upgrade-all
-sudo pear install --alldeps phpunit/PHPUnit
-```
-
+```bash
+curl -sS https://getcomposer.org/installer | php
+sudo mv composer.phar /usr/local/bin/composer
+composer -v
+``` 
 ## 2. Set up a testing URL
 
 First, we'll set up a new custom domain so as not to conflict with any pre-existing servers.
 
-```
+```bash
 $ sudo sh -c "echo '\n127.0.0.1  restagent.vm' >> /etc/hosts"
 ```
 
@@ -65,7 +59,8 @@ server {
 ```
 
 ## 3. Run the tests
-```
-$ cd /path/to/restagent/tests
-$ phpunit . 
+
+```bash
+$ cd /path/to/restagent
+$ composer test
 ```
