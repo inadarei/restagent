@@ -11,6 +11,18 @@ RestAgent's API is inspired by the simplicity of the API in [SuperAgent](https:/
 
 PHP 5.3 or newer.
 
+### Installation
+
+Add `inadarei/restagent` to your `composer.json`.
+
+```
+{
+  "require": {
+    "inadarei/restagent": "^2.0.0"
+  }
+}
+```
+
 ## Quick Docs:
 
 ### Issuing a Request
