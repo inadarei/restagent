@@ -11,9 +11,9 @@ RestAgent's API is inspired by the simplicity of the API in [SuperAgent](https:/
 
 PHP 5.3 or newer.
 
-### Installation
+## Installation
 
-#### Install composer
+#### 1. Install composer
 
 ```bash
 curl -sS https://getcomposer.org/installer | php
@@ -22,7 +22,7 @@ composer -v
 ``` 
 or see detailed documentation: [https://getcomposer.org/doc/00-intro.md](https://getcomposer.org/doc/00-intro.md#installation-linux-unix-osx) 
 
-#### Include RestAgent in your project
+#### 2. Include RestAgent in your project
 
 Add `inadarei/restagent` to your `composer.json`.
 
