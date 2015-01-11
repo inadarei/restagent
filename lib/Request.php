@@ -25,7 +25,7 @@ class Request {
   /**
    * Public constructor
    *
-   * @param null $base_url
+   * @param string|null $base_url
    */
   public function __construct($base_url = '') {
 
@@ -230,7 +230,7 @@ class Request {
   /**
    * Generic implementation of a HTTP Request.
    *
-   * @param $http_method
+   * @param string $http_method
    * @param  $uri
    * @param array $_data
    * @return
@@ -462,7 +462,7 @@ class Request {
   /**
    * @param  $path
    *    Full path to a file (e.g. as returned by PHP's realpath function).
-   * @return void
+   * @return string
    */
   public function file_mime_type ($path)  {
     return $this->detect_mime_type($path, 'path');
@@ -471,7 +471,7 @@ class Request {
   /**
    * @param  $content
    *    content of a file in a string buffer format.
-   * @return void
+   * @return string
    */
   public function content_mime_type ($content)  {
     return $this->detect_mime_type($content, 'content');
@@ -481,6 +481,7 @@ class Request {
    * Underlying impl. of content_mime_type and file_mime_type to avoid code duplication
    *
    *  $mode: either "content" or "path". If something else: defaults to path
+   * @param string $mode
    */
   protected function detect_mime_type($_data, $mode) {
     $ftype = 'application/octet-stream';
