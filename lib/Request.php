@@ -454,17 +454,7 @@ class Request {
    * @return void
    */
   public function file_mime_type ($path)  {
-    $ftype = 'application/octet-stream';
-
-    if (function_exists("finfo_file")) {
-      $finfo = new finfo(FILEINFO_MIME_TYPE | FILEINFO_SYMLINK);
-      $fres = $finfo->file($path);
-      if (is_string($fres) && !empty($fres)) {
-        $ftype = $fres;
-      }
-    }
-
-    return $ftype;
+    return $this->detect_mime_type($path, 'path');
   }
 
   /**
@@ -473,16 +463,26 @@ class Request {
    * @return void
    */
   public function content_mime_type ($content)  {
+    return $this->detect_mime_type($content, 'content');
+  }
+  
+  /**
+   * Underlying impl. of content_mime_type and file_mime_type to avoid code duplication
+   *
+   *  $mode: either "content" or "path". If something else: defaults to path
+   */
+  protected function detect_mime_type($_data, $mode) {
     $ftype = 'application/octet-stream';
-
+    
     if (function_exists("finfo_file")) {
       $finfo = new finfo(FILEINFO_MIME_TYPE | FILEINFO_SYMLINK);
-      $fres = $finfo->buffer($content);
+        $method = ($mode == 'content') ? 'buffer' : 'file';
+      $fres = $finfo->$method($content);
       if (is_string($fres) && !empty($fres)) {
         $ftype = $fres;
       }
     }
-
+          
     return $ftype;
   }
 
