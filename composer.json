@@ -16,7 +16,7 @@
     },
     "scripts" : {
       "test" : "cd tests && php ../vendor/phpunit/phpunit/phpunit .",
-      "coveralls" : "mkdir -p build/logs && php vendor/bin/coveralls -v"
+      "coveralls" : "composer test && php vendor/bin/coveralls"
     },
 
     "autoload": {

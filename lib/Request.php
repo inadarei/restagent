@@ -69,10 +69,10 @@ class Request {
   /**
    * Set curl/http timeout in milliseconds.
    *
-   * @param $ms
+   * @param $timeoutLengthInMS
    */
-  public function timeout($ms) {
-    curl_setopt($this->curl, CURLOPT_TIMEOUT_MS, $ms);
+  public function timeout($timeoutLengthInMS) {
+    curl_setopt($this->curl, CURLOPT_TIMEOUT_MS, $timeoutLengthInMS);
     return $this;
   }
 
