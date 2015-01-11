@@ -477,7 +477,7 @@ class Request {
     if (function_exists("finfo_file")) {
       $finfo = new finfo(FILEINFO_MIME_TYPE | FILEINFO_SYMLINK);
         $method = ($mode == 'content') ? 'buffer' : 'file';
-      $fres = $finfo->$method($content);
+      $fres = $finfo->$method($_data);
       if (is_string($fres) && !empty($fres)) {
         $ftype = $fres;
       }
