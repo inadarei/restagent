@@ -1,6 +1,6 @@
 ## RestAgent for PHP
 
-[![Build Status](https://scrutinizer-ci.com/g/inadarei/restagent/badges/build.png?b=master)](https://scrutinizer-ci.com/g/inadarei/restagent/build-status/master)
+[![Build Status](https://scrutinizer-ci.com/g/inadarei/restagent/badges/build.png?b=master&style=flat)](https://scrutinizer-ci.com/g/inadarei/restagent/build-status/master)
 [![Codacy Badge](https://www.codacy.com/project/badge/63fdccd4718047b59d51c4b585559ad9)](https://www.codacy.com/public/irakli/restagent)
 
 
