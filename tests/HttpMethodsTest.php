@@ -1,9 +1,9 @@
 <?php
 
-namespace restagent;
+namespace Restagent;
 
 require_once (__DIR__ . '/TestCase.class.php');
-require_once (realpath(__DIR__ . '/../restagent.lib.php'));
+require_once (realpath(__DIR__ . '/../vendor/autoload.php'));
 
 /**
  * Functional tests for basic endpoint processing
@@ -14,7 +14,7 @@ class HttpMethodsTest extends TestCase {
 
   public function setUp() {
     parent::setUp();
-    $this->request = new \restagent\Request($this->server_url);
+    $this->request = new \Restagent\Request($this->server_url);
   }
 
   public function test_get() {
