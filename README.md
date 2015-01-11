@@ -3,9 +3,10 @@
 [![Build Status](https://travis-ci.org/inadarei/restagent.svg?branch=master&style=flat)](https://travis-ci.org/inadarei/restagent)
 [![Coverage Status](https://img.shields.io/coveralls/inadarei/restagent.svg?style=flat)](https://coveralls.io/r/inadarei/restagent?branch=master)
 [![Codacy Badge](https://www.codacy.com/project/badge/63fdccd4718047b59d51c4b585559ad9)](https://www.codacy.com/public/irakli/restagent)
+<!---
 [![Build Status](https://scrutinizer-ci.com/g/inadarei/restagent/badges/build.png?b=master&style=flat)](https://scrutinizer-ci.com/g/inadarei/restagent/build-status/master)
 [![codecov.io](https://codecov.io/github/iraklici/restagent/coverage.svg?branch=master)](https://codecov.io/github/iraklici/restagent?branch=master)
-
+-->
 
 RestAgent is an HTTP/HTTPS client library for PHP. Project's primary goals are, to: 
 
