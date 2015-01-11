@@ -232,7 +232,7 @@ class Request {
    *
    * @param $http_method
    * @param  $uri
-   * @param array $data
+   * @param array $_data
    * @return
    *  an array containing json and decoded versions of the response.
    */
