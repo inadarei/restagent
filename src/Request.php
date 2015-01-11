@@ -70,6 +70,7 @@ class Request {
    * Set curl/http timeout in milliseconds.
    *
    * @param $timeoutLengthInMS
+   * @return $this
    */
   public function timeout($timeoutLengthInMS) {
     curl_setopt($this->curl, CURLOPT_TIMEOUT_MS, $timeoutLengthInMS);
@@ -82,11 +83,9 @@ class Request {
    * @TODO: http head is odd enough that for now it is not using http_request method and duplicates some code.
    *        We may need to revisit that decision, later.
    *
-   * @return
-   *     Raw HTTP Headers of the response.
-   *
-   * @see: http://www.php.net/manual/en/context.params.php
-   *
+   * @param $uri
+   * @return array Raw HTTP Headers of the response.
+   * @throws RestAgentException
    */
   public function head($uri) {
     curl_setopt($this->curl, CURLOPT_HEADER, 1);
