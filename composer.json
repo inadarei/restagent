@@ -16,12 +16,6 @@
     "scripts" : {
       "test" : "cd tests && php ../vendor/phpunit/phpunit/phpunit ."
     },
-    
-    "extra": {
-        "branch-alias": {
-            "dev-master": "2.0.0"
-        }
-    },
 
     "autoload": {
         "psr-4": {
