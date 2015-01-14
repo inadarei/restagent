@@ -235,7 +235,7 @@ class Request {
    * @return
    *  an array containing json and decoded versions of the response.
    */
-  protected function http_request($http_method, $uri, $_data = array()) {
+  public function http_request($http_method, $uri, $_data = array()) {
     $http_method = strtoupper($http_method);
     if ($http_method == 'GET' && !empty($this->params) && is_array($this->params)) {
       throw new RestAgentException("You may not use param() when issuing an HTTP GET. Use data() instead!");
