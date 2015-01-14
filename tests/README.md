@@ -12,6 +12,7 @@ composer -v
 
 ```bash
 $ cd /path/to/restagent
+$ composer install
 $ composer test
 ```
 

@@ -1,5 +1,5 @@
 ## RestAgent for PHP
-[![Packagist](https://img.shields.io/packagist/v/inadarei/restagent.svg?style=flat)]()
+[![Packagist](https://img.shields.io/packagist/v/inadarei/restagent.svg?style=flat)](https://packagist.org/packages/inadarei/restagent)
 [![Build Status](https://travis-ci.org/inadarei/restagent.svg?branch=master&style=flat)](https://travis-ci.org/inadarei/restagent)
 [![Coverage Status](https://img.shields.io/coveralls/inadarei/restagent.svg?style=flat)](https://coveralls.io/r/inadarei/restagent?branch=master)
 [![Codacy Badge](https://www.codacy.com/project/badge/63fdccd4718047b59d51c4b585559ad9)](https://www.codacy.com/public/irakli/restagent)
